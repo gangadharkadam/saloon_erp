@@ -140,8 +140,8 @@ class SalarySlip(TransactionBase):
 		else:
 			self.get_leave_details(self.leave_without_pay)
 
-		if not self.net_pay:
-			self.calculate_net_pay()
+		#if not self.net_pay:
+		self.calculate_net_pay()
 
 		company_currency = get_company_currency(self.company)
 		self.total_in_words = money_in_words(self.rounded_total, company_currency)
@@ -160,6 +160,24 @@ class SalarySlip(TransactionBase):
 				d.e_modified_amount = d.e_amount
 			self.gross_pay += flt(d.e_modified_amount)
 
+	def calculate_ovetime_total(self):
+		emp_hourly_ot_amount,ot_hours=0.0 ,0.0
+		if self.month<=3:
+			year=self.fiscal_year.split('-')[1]
+		else:
+			year=self.fiscal_year.split('-')[0]
+		res=frappe.db.sql("select ifnull(sum(ot_hours),0.0) from tabAttendance where employee='%s' and Month(att_date)='%s' and Year(att_date)='%s' "%(self.employee,self.month,year))
+		if res:
+			ot_hours=res and res[0][0] or 0
+		for d in self.get("earnings"):
+			if d.e_type == 'Basic':
+				emp_hourly_ot_amount= rounded(flt((d.e_modified_amount / (26.00*8.0))*1.5))
+			if d.e_type =='Overtime':
+				d.e_amount=	emp_hourly_ot_amount*ot_hours		
+				d.e_modified_amount=emp_hourly_ot_amount*ot_hours
+		return "done"
+		
+
 	def calculate_ded_total(self):
 		self.total_deduction = 0
 		for d in self.get('deductions'):
@@ -175,7 +193,7 @@ class SalarySlip(TransactionBase):
 
 	def calculate_net_pay(self):
 		disable_rounded_total = cint(frappe.db.get_value("Global Defaults", None, "disable_rounded_total"))
-
+		self.calculate_ovetime_total()
 		self.calculate_earning_total()
 		self.calculate_ded_total()
 		self.net_pay = flt(self.gross_pay) - flt(self.total_deduction)

@@ -183,7 +183,10 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 							doctype: item.doctype,
 							name: item.name,
 							project_name: item.project_name || me.frm.doc.project_name,
-							qty: item.qty
+							qty: item.qty,
+							adon:item.adon,
+							emp:item.emp,
+							desc:item.desc
 						}
 					},
 
@@ -591,7 +594,10 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 					"item_code": d.item_code,
 					"item_group": d.item_group,
 					"brand": d.brand,
-					"qty": d.qty
+					"qty": d.qty,
+					"adon":d.adon,
+					"desc":d.desc,
+					"emp":d.emp
 				});
 			}
 		};

@@ -161,7 +161,7 @@
    "print_hide": 0, 
    "read_only": 0, 
    "report_hide": 0, 
-   "reqd": 0, 
+   "reqd": 1, 
    "search_index": 0, 
    "set_only_once": 0, 
    "unique": 0
@@ -470,7 +470,7 @@
  "is_submittable": 0, 
  "issingle": 0, 
  "istable": 0, 
- "modified": "2015-08-27 03:39:27.529205", 
+ "modified": "2015-10-19 18:49:09.034968", 
  "modified_by": "Administrator", 
  "module": "Utilities", 
  "name": "Contact", 
@@ -713,11 +713,12 @@
    "report": 1, 
    "role": "All", 
    "set_user_permissions": 0, 
-   "share": 0, 
+   "share": 1, 
    "submit": 0, 
    "write": 0
   }
  ], 
  "read_only": 0, 
- "read_only_onload": 0
+ "read_only_onload": 0, 
+ "search_fields": "phone, customer"
 }

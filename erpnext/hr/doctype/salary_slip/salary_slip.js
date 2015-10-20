@@ -72,8 +72,20 @@ cur_frm.cscript.d_depends_on_lwp = function(doc, dt, dn) {
 var calculate_earning_total = function(doc, dt, dn, reset_amount) {
 	var tbl = doc.earnings || [];
 
-	var total_earn = 0;
+	var total_earn=0.0
+
 	for(var i = 0; i < tbl.length; i++){
+		if (tbl[i].e_type=='Overtime') {
+			frappe.call({
+				method: "calculate_ovetime_total",
+				doc: doc,
+				callback: function(r, rt) {					
+					refresh_many(['e_modified_amount', 'e_amount']);					
+				}
+			});
+			refresh_many(['e_modified_amount', 'e_amount']);
+		}
+		
 		if(cint(tbl[i].e_depends_on_lwp) == 1) {
 			tbl[i].e_modified_amount =  Math.round(tbl[i].e_amount)*(flt(doc.payment_days) / 
 				cint(doc.total_days_in_month)*100)/100;			

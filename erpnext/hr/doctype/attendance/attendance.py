@@ -4,10 +4,12 @@
 from __future__ import unicode_literals
 import frappe
 
-from frappe.utils import getdate, nowdate
+from frappe.utils import getdate, nowdate, flt,cstr
 from frappe import _
 from frappe.model.document import Document
 from erpnext.hr.utils import set_employee_name
+import datetime
+
 
 class Attendance(Document):
 	def validate_duplicate_record(self):
@@ -53,3 +55,13 @@ class Attendance(Document):
 		# while uploading employee attendance
 		employee_name = frappe.db.get_value("Employee", self.employee, "employee_name")
 		frappe.db.set(self, 'employee_name', employee_name)
+
+		# calculate total worked hours
+		time_in = self.att_date+" "+self.time_in
+		time_out = self.att_date+" "+self.time_out
+		start = datetime.datetime.strptime(time_in, '%Y-%m-%d %H:%M:%S')
+		ends = datetime.datetime.strptime(time_out, '%Y-%m-%d %H:%M:%S')
+		diff =  ends -start
+		hrs=cstr(diff).split(':')[0]
+		mnts=cstr(diff).split(':')[1]
+		self.ot_hours = flt(hrs+"."+mnts)-8.0

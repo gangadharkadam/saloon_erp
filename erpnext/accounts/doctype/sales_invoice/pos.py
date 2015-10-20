@@ -53,3 +53,18 @@ def get_items(price_list, sales_or_purchase, item=None):
 		order by
 			{order_by}
 			i.name""".format(condition=condition, order_by=order_by), args, as_dict=1)
+
+@frappe.whitelist()
+def get_mobile_no(doctype, txt, searchfield, start, page_len, filters):
+	get_cont = frappe.db.sql("""select phone, customer from `tabContact`""",as_list=1)
+	return get_cont
+
+@frappe.whitelist()
+def get_customer(mob_no):
+	get_cust = frappe.db.sql("""select customer from `tabContact` where phone=%s"""%(mob_no),as_list=1)
+	return get_cust
+
+@frappe.whitelist()
+def get_all_employee(doctype, txt, searchfield, start, page_len, filters):
+	employees = frappe.db.sql("""select name from `tabEmployee`""",as_list=1)
+	return employees

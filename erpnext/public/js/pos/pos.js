@@ -41,9 +41,61 @@ erpnext.pos.PointOfSale = Class.extend({
 		this.sales_or_purchase = (party == "Customer" ? "Sales" : "Purchase");
 	},
 	make: function() {
-		this.make_party();
+		this.make_mobile_no();
+		// this.make_party();
 		this.make_search();
 		this.make_item_list();
+	},
+	make_mobile_no: function() {
+		var me = this;
+		
+		this.mob_no = frappe.ui.form.make_control({
+			df: {
+				"fieldtype": "Link",
+				"options": 'Contact',
+				"label": 'Contact',
+				"fieldname": "mob_no",
+				"placeholder": "Mobile No"
+			},
+			parent: this.wrapper.find(".party-area1"),
+			only_input: true,
+		});
+		this.mob_no.make_input();
+
+		this.party_field = frappe.ui.form.make_control({
+			df: {
+				"fieldtype": "Link",
+				"options": this.party,
+				"label": this.party,
+				"fieldname": "pos_party",
+				"placeholder": this.party
+			},
+			parent: this.wrapper.find(".party-area"),
+			only_input: true,
+		});
+		this.party_field.make_input();
+		
+		this.mob_no.get_query = function() { 
+			return{
+					query: "erpnext.accounts.doctype.sales_invoice.pos.get_mobile_no"
+				}
+		}
+		
+		this.mob_no.$input.on("change", function() {
+			var mob_no=me.mob_no.$input.val();
+			frappe.call({
+				method: 'erpnext.accounts.doctype.sales_invoice.pos.get_customer',
+				args:{
+					mob_no:mob_no
+				},
+				callback: function(r) {
+					var cust = r.message[0][0]
+					$("input[data-fieldname = pos_party]").val(cust);
+					frappe.model.set_value(me.frm.doctype, me.frm.docname, me.party.toLowerCase(), cust);
+				}
+			});
+			frappe.model.set_value(me.frm.doctype, me.frm.docname, this.value);
+		});
 	},
 	make_party: function() {
 		var me = this;
@@ -86,6 +138,7 @@ erpnext.pos.PointOfSale = Class.extend({
 		});
 	},
 	make_item_list: function() {
+		console.log("in make_item_list")
 		var me = this;
 		if(!this.price_list) {
 			msgprint(__("Price List not found or disabled"));
@@ -150,6 +203,7 @@ erpnext.pos.PointOfSale = Class.extend({
 
 		// get no_of_items
 		var no_of_items = me.wrapper.find(".pos-bill-item").length;
+		// console.log(no_of_items)
 
 		// check whether the item is already added
 		if (no_of_items != 0) {
@@ -174,7 +228,7 @@ erpnext.pos.PointOfSale = Class.extend({
 	add_new_item_to_grid: function(item_code, serial_no) {
 		var me = this;
 
-		var child = frappe.model.add_child(me.frm.doc, this.frm.doctype + " Item", "items");
+		var child = frappe.model.add_child(me.frm.doc, this.frm.doctype + " Item", "items");	
 		child.item_code = item_code;
 		child.qty = 1;
 
@@ -182,9 +236,10 @@ erpnext.pos.PointOfSale = Class.extend({
 			child.serial_no = serial_no;
 
 		this.frm.script_manager.trigger("item_code", child.doctype, child.name);
-		frappe.after_ajax(function() {
-			me.frm.script_manager.trigger("qty", child.doctype, child.name);
-		})
+		//Commented By Priya....
+		// frappe.after_ajax(function() {
+		// 	me.frm.script_manager.trigger("qty", child.doctype, child.name);
+		// })
 	},
 	refresh_search_box: function() {
 		var me = this;
@@ -196,6 +251,7 @@ erpnext.pos.PointOfSale = Class.extend({
 		}
 	},
 	update_qty: function(item_code, qty) {
+		console.log("in update_qty")
 		var me = this;
 		$.each(this.frm.doc["items"] || [], function(i, d) {
 			if (d.item_code == item_code) {
@@ -215,10 +271,13 @@ erpnext.pos.PointOfSale = Class.extend({
 		this.refresh_item_list();
 		this.refresh_fields();
 
-		// if form is local then only run all these functions
 		if (this.frm.doc.docstatus===0) {
 			this.call_when_local();
 		}
+		// this.refresh_item_list();
+		// this.refresh_fields();
+		// if form is local then only run all these functions
+		
 
 		this.disable_text_box_and_button();
 		this.set_primary_action();
@@ -256,8 +315,12 @@ erpnext.pos.PointOfSale = Class.extend({
 				actual_qty: d.actual_qty,
 				projected_qty: d.projected_qty,
 				rate: format_currency(d.rate, me.frm.doc.currency),
-				amount: format_currency(d.amount, me.frm.doc.currency)
+				amount: format_currency(d.amount, me.frm.doc.currency),
+				adon:d.adon,
+				desc:d.desc,
+				emp:d.emp
 			})).appendTo($items);
+			me.get_employee(d.item_code)
 		});
 
 		this.wrapper.find("input.pos-item-qty").on("focus", function() {
@@ -297,8 +360,53 @@ erpnext.pos.PointOfSale = Class.extend({
 
 		// increase/decrease qty on plus/minus button
 		$(this.wrapper).find(".pos-qty-btn").on("click", function() {
+			console.log("increase Qty")
 			var $item = $(this).parents(".pos-bill-item:first");
 			me.increase_decrease_qty($item, $(this).attr("data-action"));
+		});
+
+		$(this.wrapper).find(".pos-item-desc").on("focusout", function() {
+			var desc = $(this).val()
+			var item_code =$(this).parent().parent().parent().attr("data-item-code")
+			$.each(me.frm.doc.items|| [], function(i, d) {
+				if (d.item_code == item_code){
+					frappe.model.set_value(d.doctype, d.name, "desc", desc);
+				}
+			});
+		});
+		// $(this.wrapper).find(".pos-item-emp").on("change", function() {
+		// 	console.log("EMP")
+
+		// 	var emp = $(this).text()
+		// 	console.log(emp)
+		// 	var emp = $(this).text().replace(' Create a new Employee Advanced Search', '').replace('        ','');
+		// 	console.log(emp)
+		// 	$("input[data-fieldname = emp]").val(emp);
+		// 	// console.log('"'+emp+'"')
+		// 	// frappe.model.set_value(d.doctype, d.name, "emp", emp);
+		// 	// $("input[data-fieldname = emp]").val(employee);
+		// 	// var item_code =$(this).parent().parent().parent().attr("data-item-code")
+		// 	// $.each(me.frm.doc.items|| [], function(i, d) {
+		// 	// 	if (d.item_code == item_code){
+		// 	// 		// frappe.model.set_value(d.doctype, d.name, "emp", emp);
+		// 	// 		frappe.model.set_value(me.frm.doctype, me.frm.docname, "emp", emp);
+		// 	// 	}			
+		// 	// });
+		// });
+
+		$(this.wrapper).find(".pos-item-adon").on("focusout", function() {
+			var adon = 0.0
+			adon = parseInt($(this).val());
+			var item_code =$(this).parent().parent().parent().attr("data-item-code")
+			$.each(me.frm.doc.items|| [], function(i, d) {
+				if (d.item_code == item_code){
+					// frappe.model.set_value(d.doctype, d.name, "rate", d.rate + adon );
+					frappe.model.set_value(d.doctype, d.name, "amount", d.amount + adon );
+					frappe.model.set_value(d.doctype, d.name, "adon", adon );
+				}
+			});
+			// frappe.model.set_value(d.doctype, d.name, "net_total", d.amount );
+			// frappe.model.set_value(d.doctype, d.name, "grand_total", d.amount );
 		});
 
 		this.focus();
@@ -310,6 +418,47 @@ erpnext.pos.PointOfSale = Class.extend({
 			if(!(this.frm.doctype == "Quotation" && this.frm.doc.quotation_to!="Customer"))
 				this.party_field.$input.focus();
 		}
+	},
+	get_employee: function(item_code) {
+		var me = this;
+
+		item = $.grep( $(".items").children(), function( n, i ) {
+    		return $(n).attr("data-item-code") == item_code
+
+			} );
+		// console.log(item.doctype)
+		this.emp = frappe.ui.form.make_control({
+			df: {
+				"fieldtype": "Link",
+				"options": 'Employee',
+				"label": 'Employee',
+				"fieldname": 'emp',
+				"placeholder": 'Attended By'
+			},
+			parent: $(item).find(".pos-item-emp"),
+			only_input: true,
+		});
+		this.emp.get_query = function() { 
+			return{
+					query: "erpnext.accounts.doctype.sales_invoice.pos.get_all_employee"
+				}
+		}
+		this.emp.make_input();
+		this.emp.$input.on("change", function() {
+			console.log("on trigger")
+			console.log(this.value)
+			console.log(me.frm.docname)
+			// if(!me.emp.autocomplete_open)
+			$("input[data-fieldname = emp]").val(this.value);
+			$.each(me.frm.doc.items|| [], function(i, d) {
+				console.log(this.value)
+				if (d.item_code == item_code){
+					frappe.model.set_value(d.doctype, d.name, "emp", this.value);
+				}
+			});
+			// frappe.model.set_value(me.frm.doctype, me.frm.docname, "emp", this.value);
+		});
+
 	},
 	increase_decrease_qty: function($item, operation) {
 		var item_code = $item.attr("data-item-code");
