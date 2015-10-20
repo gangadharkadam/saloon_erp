@@ -96,6 +96,11 @@ def get_data():
 				},
 				{
 					"type": "doctype",
+					"name": "Overtime Setting",
+					"description": _("Overtime Setting for Company.")
+				},
+				{
+					"type": "doctype",
 					"name": "Branch",
 					"description": _("Organization branch master.")
 				},

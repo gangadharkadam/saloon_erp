@@ -161,20 +161,41 @@ class SalarySlip(TransactionBase):
 			self.gross_pay += flt(d.e_modified_amount)
 
 	def calculate_ovetime_total(self):
-		emp_hourly_ot_amount,ot_hours=0.0 ,0.0
+		emp_hourly_ot_amount,emp_hourly_oth_amount,ot_hours,oth_hours,total_ot_amount=0.0 ,0.0,0.0,0.0,0.0
+
+		std_ot_hours=frappe.db.get_value("Overtime Setting", self.company, "working_hours")
+		if not std_ot_hours:
+			std_ot_hours=frappe.db.get_value("Overtime Setting", 'vlinku', "working_hours")
+
+		std_ot_days=frappe.db.get_value("Overtime Setting", self.company, "working_days")
+		if not std_ot_days:
+			std_ot_days=frappe.db.get_value("Overtime Setting", 'vlinku', "working_days")
+
+		std_ot_rate=frappe.db.get_value("Overtime Setting", self.company, "normal_ot_rate_for_hour")
+		if not std_ot_rate:
+			std_ot_rate=frappe.db.get_value("Overtime Setting", 'vlinku', "normal_ot_rate_for_hour")				
+
+		std_oth_rate=frappe.db.get_value("Overtime Setting", self.company, "holiday_ot_rate_for_hour")
+		if not std_oth_rate:
+			std_oth_rate=frappe.db.get_value("Overtime Setting", 'vlinku', "holiday_ot_rate_for_hour")
+
 		if self.month<=3:
 			year=self.fiscal_year.split('-')[1]
 		else:
 			year=self.fiscal_year.split('-')[0]
-		res=frappe.db.sql("select ifnull(sum(ot_hours),0.0) from tabAttendance where employee='%s' and Month(att_date)='%s' and Year(att_date)='%s' "%(self.employee,self.month,year))
+		res=frappe.db.sql("select ifnull(sum(ot_hours),0.0) as ot_hours,ifnull(sum(holiday_ot_hours),0.0) as oth_hours from tabAttendance where employee='%s' and Month(att_date)='%s' and Year(att_date)='%s' "%(self.employee,self.month,year),as_dict=1)
 		if res:
-			ot_hours=res and res[0][0] or 0
+			ot_hours=res and res[0]['ot_hours'] or 0.0
+			oth_hours=res and res[0]['oth_hours'] or 0.0
 		for d in self.get("earnings"):
 			if d.e_type == 'Basic':
-				emp_hourly_ot_amount= rounded(flt((d.e_modified_amount / (26.00*8.0))*1.5))
+				emp_hourly_ot_amount= rounded(flt((d.e_modified_amount / (std_ot_days * std_ot_hours))*std_ot_rate))
+				emp_hourly_oth_amount= rounded(flt((d.e_modified_amount / (std_ot_days * std_ot_hours))*std_oth_rate))
+			total_ot_amount=(emp_hourly_ot_amount* ot_hours) + (emp_hourly_oth_amount*oth_hours)	
+			#frappe.errprint(["ot_hours",ot_hours,"oth_hours",oth_hours,"emp_hourly_ot_amount",emp_hourly_ot_amount,"emp_hourly_oth_amount",emp_hourly_oth_amount,"emp_hourly_ot_amount* ot_hours",emp_hourly_ot_amount* ot_hours,"emp_hourly_oth_amount* ot_hours",emp_hourly_oth_amount* oth_hours])
 			if d.e_type =='Overtime':
-				d.e_amount=	emp_hourly_ot_amount*ot_hours		
-				d.e_modified_amount=emp_hourly_ot_amount*ot_hours
+				d.e_amount=	total_ot_amount	
+				d.e_modified_amount=total_ot_amount
 		return "done"
 		
 

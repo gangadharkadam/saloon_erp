@@ -56,7 +56,7 @@ class Attendance(Document):
 		employee_name = frappe.db.get_value("Employee", self.employee, "employee_name")
 		frappe.db.set(self, 'employee_name', employee_name)
 
-		# calculate total worked hours
+		# calculate OT worked hours
 		time_in = self.att_date+" "+self.time_in
 		time_out = self.att_date+" "+self.time_out
 		start = datetime.datetime.strptime(time_in, '%Y-%m-%d %H:%M:%S')
@@ -64,4 +64,13 @@ class Attendance(Document):
 		diff =  ends -start
 		hrs=cstr(diff).split(':')[0]
 		mnts=cstr(diff).split(':')[1]
-		self.ot_hours = flt(hrs+"."+mnts)-8.0
+		std_ot_hours=frappe.db.get_value("Overtime Setting", self.company, "working_hours")
+		if not std_ot_hours:
+			std_ot_hours=frappe.db.get_value("Overtime Setting", 'vlinku', "working_hours")
+		is_holiday=frappe.db.sql("select h.description from `tabHoliday List` hl ,`tabHoliday` h where hl.name=h.parent and h.holiday_date='%s' and h.description not in ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')" %(self.att_date))
+		if is_holiday:
+			self.holiday_ot_hours = flt(hrs+"."+mnts)-flt(std_ot_hours)
+			self.ot_hours='0.0'
+		else:
+			self.ot_hours = flt(hrs+"."+mnts)-flt(std_ot_hours)
+			self.holiday_ot_hours='0.0'
