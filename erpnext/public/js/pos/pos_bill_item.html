@@ -18,15 +18,17 @@
         </div>
     </div>
     <div class="col-xs-2 text-right">
-        <h6>{%= amount %}<div class="text-muted rate" style="margin-top: 5px;">{%= rate %}</div></h6>
+        <h6><div class="amount" id="amount" style="margin-top: 5px;">{%= amount %}</div><div class="text-muted rate" style="margin-top: 5px;">{%= rate %}</div></h6>
     </div>
     <div class="col-xs-2" >
         <h6>
-            <input type="text" class="form-control input-sm pos-item-adon text-right" id="adon">
+            <input type="text" class="form-control input-sm pos-item-adon text-right" id="adon" data-fieldname="adon" value="{%= adon %}">
         </h6>
     </div>
     <div class="col-xs-2">
-        <h6><input type="text" class="form-control input-sm pos-item-desc text-right" id="desc"></h6>
+        <h6>
+            <input type="text" class="form-control input-sm pos-item-desc text-right" id="desc" data-fieldname="desc" value="{%= desc %}">
+        </h6>
     </div>
-    <div class="col-xs-2 pos-item-emp"></div>
+    <div class="col-xs-2 pos-item-emp" style="margin-top:10px"></div>
 </div>

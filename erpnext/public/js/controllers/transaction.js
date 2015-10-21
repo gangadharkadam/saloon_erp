@@ -594,10 +594,10 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 					"item_code": d.item_code,
 					"item_group": d.item_group,
 					"brand": d.brand,
-					"qty": d.qty,
-					"adon":d.adon,
-					"desc":d.desc,
-					"emp":d.emp
+					"qty": d.qty
+					// "adon":d.adon,
+					// "desc":d.desc,
+					// "emp":d.emp
 				});
 			}
 		};

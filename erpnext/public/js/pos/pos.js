@@ -259,6 +259,25 @@ erpnext.pos.PointOfSale = Class.extend({
 					frappe.model.clear_doc(d.doctype, d.name);
 					me.refresh_grid();
 				} else {
+
+					item = $.grep( $(".items").children(), function( n, i ) {
+    					return $(n).attr("data-item-code") == item_code
+						} );
+
+					var adon = $(item).find(".pos-item-adon").val()
+
+					// if (parseInt(d.adon)){
+					// 	console.log("in if")
+					// 	// total_amt = d.amount - parseInt(d.adon) + parseInt(adon)
+					// 	total_amt = d.rate * d.qty + adon
+					// }
+					// else{
+					// 	console.log("in else")
+					// 	total_amt = d.amount + adon
+					// }
+					total_amt = d.rate * d.qty + adon
+					console.log(total_amt)
+					frappe.model.set_value(d.doctype, d.name, "amount", total_amt);
 					frappe.model.set_value(d.doctype, d.name, "qty", qty);
 				}
 			}
@@ -304,10 +323,17 @@ erpnext.pos.PointOfSale = Class.extend({
 		}
 	},
 	show_items_in_item_cart: function() {
+
 		var me = this;
+		// var $adon=$("#adon").val();
+		// var $desc=$("#desc").val();
+		// var $emp=$("input[data-fieldname = emp]").val();
+		
 		var $items = this.wrapper.find(".items").empty();
 
 		$.each(this.frm.doc.items|| [], function(i, d) {
+			$new_adon=d.adon;
+			console.log(d)
 			$(frappe.render_template("pos_bill_item", {
 				item_code: d.item_code,
 				item_name: (d.item_name===d.item_code || !d.item_name) ? "" : ("<br>" + d.item_name),
@@ -317,15 +343,20 @@ erpnext.pos.PointOfSale = Class.extend({
 				rate: format_currency(d.rate, me.frm.doc.currency),
 				amount: format_currency(d.amount, me.frm.doc.currency),
 				adon:d.adon,
-				desc:d.desc,
-				emp:d.emp
+				desc:d.desc
 			})).appendTo($items);
-			me.get_employee(d.item_code)
+			
+			me.get_employee(d.item_code, d.emp)
 		});
 
 		this.wrapper.find("input.pos-item-qty").on("focus", function() {
 			$(this).select();
 		});
+
+		// $("#adon").val($adon);
+		// $("#desc").val($desc);
+		// $("input[data-fieldname = emp]").val($emp);
+
 	},
 	show_taxes: function() {
 		var me = this;
@@ -351,7 +382,7 @@ erpnext.pos.PointOfSale = Class.extend({
 	},
 	call_when_local: function() {
 		var me = this;
-
+		// alert("refresh");
 		// append quantity to the respective item after change from input box
 		$(this.wrapper).find("input.pos-item-qty").on("change", function() {
 			var item_code = $(this).parents(".pos-bill-item").attr("data-item-code");
@@ -360,53 +391,74 @@ erpnext.pos.PointOfSale = Class.extend({
 
 		// increase/decrease qty on plus/minus button
 		$(this.wrapper).find(".pos-qty-btn").on("click", function() {
-			console.log("increase Qty")
 			var $item = $(this).parents(".pos-bill-item:first");
 			me.increase_decrease_qty($item, $(this).attr("data-action"));
 		});
 
 		$(this.wrapper).find(".pos-item-desc").on("focusout", function() {
+			console.log("desc change")
 			var desc = $(this).val()
 			var item_code =$(this).parent().parent().parent().attr("data-item-code")
 			$.each(me.frm.doc.items|| [], function(i, d) {
 				if (d.item_code == item_code){
 					frappe.model.set_value(d.doctype, d.name, "desc", desc);
+					me.refresh();
 				}
 			});
 		});
 		// $(this.wrapper).find(".pos-item-emp").on("change", function() {
 		// 	console.log("EMP")
-
 		// 	var emp = $(this).text()
-		// 	console.log(emp)
 		// 	var emp = $(this).text().replace(' Create a new Employee Advanced Search', '').replace('        ','');
 		// 	console.log(emp)
 		// 	$("input[data-fieldname = emp]").val(emp);
-		// 	// console.log('"'+emp+'"')
-		// 	// frappe.model.set_value(d.doctype, d.name, "emp", emp);
-		// 	// $("input[data-fieldname = emp]").val(employee);
-		// 	// var item_code =$(this).parent().parent().parent().attr("data-item-code")
-		// 	// $.each(me.frm.doc.items|| [], function(i, d) {
-		// 	// 	if (d.item_code == item_code){
-		// 	// 		// frappe.model.set_value(d.doctype, d.name, "emp", emp);
-		// 	// 		frappe.model.set_value(me.frm.doctype, me.frm.docname, "emp", emp);
-		// 	// 	}			
-		// 	// });
+		// 	var item_code =$(this).parent().parent().parent().attr("data-item-code")
+		// 	$.each(me.frm.doc.items|| [], function(i, d) {
+		// 		console.log(d.emp)
+		// 		if (d.item_code == item_code){
+		// 			frappe.model.set_value(d.doctype, d.name, "emp", emp);
+		// 			// frappe.model.set_value(me.frm.doctype, me.frm.docname, "emp", emp);
+		// 		}			
+		// 	});
 		// });
 
-		$(this.wrapper).find(".pos-item-adon").on("focusout", function() {
+		
+		$(this.wrapper).find("input.pos-item-adon").on("change", function() {
+			console.log("change")
 			var adon = 0.0
 			adon = parseInt($(this).val());
+			var total_val = 0.0
 			var item_code =$(this).parent().parent().parent().attr("data-item-code")
 			$.each(me.frm.doc.items|| [], function(i, d) {
+				console.log(d.adon)
 				if (d.item_code == item_code){
-					// frappe.model.set_value(d.doctype, d.name, "rate", d.rate + adon );
-					frappe.model.set_value(d.doctype, d.name, "amount", d.amount + adon );
+					if (parseInt(d.adon)){
+						console.log("If")
+						total_amt = d.amount - parseInt(d.adon) + adon
+					}
+					else{
+						console.log("else")
+						total_amt = d.amount  + adon
+					}
+					
+					// $("input[data-fieldname = amount]").val(total_amt);
+					frappe.model.set_value(d.doctype, d.name, "amount", total_amt);
 					frappe.model.set_value(d.doctype, d.name, "adon", adon );
+					// me.update_qty(d.item_code, d.qty)
+					// frappe.model.set_value(d.doctype, d.name, "qty", d.qty);	
+					
+					// me.refresh_grid()
+					// me.set_totals()
+
+
+					
+					
 				}
+
+	
 			});
-			// frappe.model.set_value(d.doctype, d.name, "net_total", d.amount );
-			// frappe.model.set_value(d.doctype, d.name, "grand_total", d.amount );
+			// me.frm.script_manager.trigger("calculate_taxes_and_totals");		
+			me.refresh()
 		});
 
 		this.focus();
@@ -419,14 +471,13 @@ erpnext.pos.PointOfSale = Class.extend({
 				this.party_field.$input.focus();
 		}
 	},
-	get_employee: function(item_code) {
+	get_employee: function(item_code, emp) {
 		var me = this;
 
 		item = $.grep( $(".items").children(), function( n, i ) {
     		return $(n).attr("data-item-code") == item_code
 
 			} );
-		// console.log(item.doctype)
 		this.emp = frappe.ui.form.make_control({
 			df: {
 				"fieldtype": "Link",
@@ -444,19 +495,16 @@ erpnext.pos.PointOfSale = Class.extend({
 				}
 		}
 		this.emp.make_input();
+		$(this.emp.$input).val(emp)
+
 		this.emp.$input.on("change", function() {
-			console.log("on trigger")
-			console.log(this.value)
-			console.log(me.frm.docname)
-			// if(!me.emp.autocomplete_open)
-			$("input[data-fieldname = emp]").val(this.value);
+			var e = this.value
 			$.each(me.frm.doc.items|| [], function(i, d) {
-				console.log(this.value)
 				if (d.item_code == item_code){
-					frappe.model.set_value(d.doctype, d.name, "emp", this.value);
+					$("input[data-fieldname = emp]").val(e);
+					frappe.model.set_value(d.doctype, d.name, "emp", e);
 				}
 			});
-			// frappe.model.set_value(me.frm.doctype, me.frm.docname, "emp", this.value);
 		});
 
 	},
