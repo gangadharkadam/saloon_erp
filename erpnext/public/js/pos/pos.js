@@ -266,21 +266,26 @@ erpnext.pos.PointOfSale = Class.extend({
 
 					var adon = $(item).find(".pos-item-adon").val()
 					console.log("ssssssss")
-					var qty1 = d.qty1 + 1
+					// console.log(qty)
+					// var qty1 = d.qty + 1
 					if (parseInt(d.adon)){
 						console.log("in if")
 						// total_amt = d.amount - parseInt(d.adon) + parseInt(adon)
 						// var qty1 = d.qty1 + 1
 						console.log(adon)
-						total_amt = (d.rate * qty1) + parseInt(adon)
+						total_amt = (d.rate * qty) + parseInt(adon)
+						$("input[data-fieldname = amount]").val(total_amt);
+						frappe.model.set_value(d.doctype, d.name, "amount", total_amt);
 					}
 					else{
 						console.log("in else")
-						ttotal_amt = d.rate * qty1
+						ttotal_amt = d.rate * qty
+						$("input[data-fieldname = amount]").val(total_amt);
+						frappe.model.set_value(d.doctype, d.name, "amount", total_amt);
 					}
 					console.log(total_amt)
 					// $("input[data-fieldname = amount]").val(total_amt);
-					frappe.model.set_value(d.doctype, d.name, "amount", total_amt);
+					// frappe.model.set_value(d.doctype, d.name, "amount", total_amt);
 
 
 					frappe.model.set_value(d.doctype, d.name, "qty", qty);
@@ -412,6 +417,16 @@ erpnext.pos.PointOfSale = Class.extend({
 		$(this.wrapper).find(".pos-qty-btn").on("click", function() {
 			var $item = $(this).parents(".pos-bill-item:first");
 			me.increase_decrease_qty($item, $(this).attr("data-action"));
+
+			// var amt = 0.0
+			// amt = me.wrapper.find('.pos-item-adon').val();
+			// if (amt){
+			// 	var amt1 = d.amount + parseInt(amt)
+			// 	$("input[data-fieldname = amount]").val(amt1);
+			// 	frappe.model.set_value(d.doctype, d.name, "amount", amt1);
+			// }
+			// console.log(me.wrapper.find('.pos-item-adon').val());
+			// console.log(d.amount);
 		});
 
 		$(this.wrapper).find(".pos-item-desc").on("focusout", function() {
@@ -474,7 +489,12 @@ erpnext.pos.PointOfSale = Class.extend({
 					if (amt){
 						var amt1 = d.amount + parseInt(amt)
 						$("input[data-fieldname = amount]").val(amt1);
+						// $("input[data-fieldname = grand_total]").val(amt1);
+						// $("input[data-fieldname = net_total]").val(amt1);
+						$('.grand-total').val(amt1);
 						frappe.model.set_value(d.doctype, d.name, "amount", amt1);
+						frappe.model.set_value(me.frm.doctype, me.frm.docname, "grand_total", amt1);
+						frappe.model.set_value(me.frm.doctype, me.frm.docname, "net_total", amt1);
 					}
 					console.log(me.wrapper.find('.pos-item-adon').val());
 					console.log(d.amount);
