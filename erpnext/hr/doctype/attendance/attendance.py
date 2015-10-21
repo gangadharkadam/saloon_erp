@@ -67,7 +67,7 @@ class Attendance(Document):
 		std_ot_hours=frappe.db.get_value("Overtime Setting", self.company, "working_hours")
 		if not std_ot_hours:
 			std_ot_hours=frappe.db.get_value("Overtime Setting", 'vlinku', "working_hours")
-		is_holiday=frappe.db.sql("select h.description from `tabHoliday List` hl ,`tabHoliday` h where hl.name=h.parent and h.holiday_date='%s' and h.description not in ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')" %(self.att_date))
+		is_holiday=frappe.db.sql("select h.description from `tabHoliday List` hl ,`tabHoliday` h where hl.name=h.parent and h.holiday_date='%s' and h.description not in ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')" %(self.att_date),debug=1)
 		if is_holiday:
 			self.holiday_ot_hours = flt(hrs+"."+mnts)-flt(std_ot_hours)
 			self.ot_hours='0.0'
