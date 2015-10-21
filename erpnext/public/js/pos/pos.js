@@ -266,17 +266,20 @@ erpnext.pos.PointOfSale = Class.extend({
 
 					var adon = $(item).find(".pos-item-adon").val()
 					console.log("ssssssss")
-					console.log(adon)
+					var qty1 = d.qty1 + 1
 					if (parseInt(d.adon)){
 						console.log("in if")
 						// total_amt = d.amount - parseInt(d.adon) + parseInt(adon)
-						total_amt = d.rate * d.qty + adon
+						// var qty1 = d.qty1 + 1
+						console.log(adon)
+						total_amt = (d.rate * qty1) + parseInt(adon)
+						// total_amt = ($('.rate').val() * $('.pos-item-qty').val()) + adon
+
 					}
 					else{
 						console.log("in else")
-						total_amt = d.amount + adon
+						ttotal_amt = d.rate * qty1
 					}
-					// total_amt = (d.rate * d.qty) + parseInt(d.adon)
 					console.log(total_amt)
 					$("input[data-fieldname = amount]").val(total_amt);
 					frappe.model.set_value(d.doctype, d.name, "amount", total_amt);
