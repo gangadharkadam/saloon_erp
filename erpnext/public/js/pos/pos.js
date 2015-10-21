@@ -273,8 +273,6 @@ erpnext.pos.PointOfSale = Class.extend({
 						// var qty1 = d.qty1 + 1
 						console.log(adon)
 						total_amt = (d.rate * qty1) + parseInt(adon)
-						// total_amt = ($('.rate').val() * $('.pos-item-qty').val()) + adon
-
 					}
 					else{
 						console.log("in else")
