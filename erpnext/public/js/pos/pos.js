@@ -279,7 +279,7 @@ erpnext.pos.PointOfSale = Class.extend({
 						ttotal_amt = d.rate * qty1
 					}
 					console.log(total_amt)
-					$("input[data-fieldname = amount]").val(total_amt);
+					// $("input[data-fieldname = amount]").val(total_amt);
 					frappe.model.set_value(d.doctype, d.name, "amount", total_amt);
 
 
