@@ -35,6 +35,17 @@ class Attendance(Document):
 		if getdate(self.att_date) > getdate(nowdate()):
 			frappe.throw(_("Attendance can not be marked for future dates"))
 
+	def validate_inout(self):
+		if (self.time_in > self.time_out):
+			frappe.throw(_("'Time In' cannot be greater that 'Time Out'"))
+
+		if (self.time_out and not self.time_in ):
+			frappe.throw(_("Please enter 'Time In' as you have entered 'Time Out'"))
+
+		if (self.time_in and not self.time_out ):
+			frappe.throw(_("Please enter 'Time Out' as you have entered 'Time In'"))
+
+
 	def validate_employee(self):
 		emp = frappe.db.sql("select name from `tabEmployee` where name = %s and status = 'Active'",
 		 	self.employee)
@@ -49,6 +60,8 @@ class Attendance(Document):
 		self.validate_att_date()
 		self.validate_duplicate_record()
 		self.check_leave_record()
+		self.validate_inout()
+		self.calculate_ot()
 
 	def on_update(self):
 		# this is done because sometimes user entered wrong employee name
@@ -56,28 +69,32 @@ class Attendance(Document):
 		employee_name = frappe.db.get_value("Employee", self.employee, "employee_name")
 		frappe.db.set(self, 'employee_name', employee_name)
 
+	def calculate_ot(self):
 		# calculate OT worked hours
-		time_in = self.att_date+" "+self.time_in
-		time_out = self.att_date+" "+self.time_out
-		start = datetime.datetime.strptime(time_in, '%Y-%m-%d %H:%M:%S')
-		ends = datetime.datetime.strptime(time_out, '%Y-%m-%d %H:%M:%S')
-		diff =  ends -start
-		hrs=cstr(diff).split(':')[0]
-		mnts=cstr(diff).split(':')[1]
-		std_ot_hours=frappe.db.get_value("Overtime Setting", self.company, "working_hours")
-		if not std_ot_hours:
-			std_ot_hours=frappe.db.get_value("Overtime Setting", 'vlinku', "working_hours")
-		is_holiday=frappe.db.sql("select h.description from `tabHoliday List` hl ,`tabHoliday` h where hl.name=h.parent and h.holiday_date='%s' and h.description not in ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')" %(self.att_date))
-		if flt(std_ot_hours)>=flt(hrs+"."+mnts) :
-			hours=0.0
-		else: 
-			hours=flt(hrs+"."+mnts)-flt(std_ot_hours)
-		if is_holiday:
-			self.holiday_ot_hours = hours
-			self.ot_hours='0.0'
-		else:
-			self.ot_hours = hours
-			self.holiday_ot_hours='0.0'
+		
+		if self.time_in and self.time_out:
+			frappe.errprint("setting ot_hours from validate")
+			time_in = self.att_date+" "+self.time_in
+			time_out = self.att_date+" "+self.time_out
+			start = datetime.datetime.strptime(time_in, '%Y-%m-%d %H:%M:%S')
+			ends = datetime.datetime.strptime(time_out, '%Y-%m-%d %H:%M:%S')
+			diff =  ends -start
+			hrs=cstr(diff).split(':')[0]
+			mnts=cstr(diff).split(':')[1]
+			std_ot_hours=frappe.db.get_value("Overtime Setting", self.company, "working_hours")
+			if not std_ot_hours:
+				std_ot_hours=frappe.db.get_value("Overtime Setting", 'vlinku', "working_hours")
+			is_holiday=frappe.db.sql("select h.description from `tabHoliday List` hl ,`tabHoliday` h where hl.name=h.parent and h.holiday_date='%s' and h.description not in ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')" %(self.att_date))
+			if flt(std_ot_hours)>=flt(hrs+"."+mnts) :
+				hours=0.0
+			else: 
+				hours=flt(hrs+"."+mnts)-flt(std_ot_hours)
+			if is_holiday:
+				self.holiday_ot_hours = hours
+				self.ot_hours='0.0'
+			else:
+				self.ot_hours = hours
+				self.holiday_ot_hours='0.0'
 
 @frappe.whitelist()
 def get_logo():
