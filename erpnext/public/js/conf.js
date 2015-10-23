@@ -10,9 +10,21 @@ $(document).bind('toolbar_setup', function() {
 	frappe.help_feedback_link = '<p><a class="text-muted" \
 		href="https://discuss.erpnext.com">Feedback</a></p>'
 
+	frappe.call({
+			method: "erpnext.hr.doctype.attendance.attendance.get_logo",
+			callback: function(r) {
+				if( r.message) {
+					var logo = frappe.urllib.get_base_url()+"/files/"+r.message
+					$('.navbar-home').html('<img class="erpnext-icon" src="'+logo+'" />');
 
-	$('.navbar-home').html('<img class="erpnext-icon" src="'+
+				}
+			}
+		});
+
+
+	/*$('.navbar-home').html('<img class="erpnext-icon" src="'+
 			frappe.urllib.get_base_url()+'/assets/erpnext/images/erp-icon.svg" />');
+	*/
 
 	$('[data-link="docs"]').attr("href", "https://manual.erpnext.com")
 });

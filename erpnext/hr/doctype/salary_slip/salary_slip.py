@@ -184,14 +184,19 @@ class SalarySlip(TransactionBase):
 		else:
 			year=self.fiscal_year.split('-')[0]
 		res=frappe.db.sql("select ifnull(sum(ot_hours),0.0) as ot_hours,ifnull(sum(holiday_ot_hours),0.0) as oth_hours from tabAttendance where employee='%s' and Month(att_date)='%s' and Year(att_date)='%s' "%(self.employee,self.month,year),as_dict=1)
+		# frappe.errprint(['std_ot_hours',std_ot_hours])
+		# frappe.errprint(['res',res])
 		if res:
 			ot_hours=res and res[0]['ot_hours'] or 0.0
 			oth_hours=res and res[0]['oth_hours'] or 0.0
 		for d in self.get("earnings"):
 			if d.e_type == 'Basic':
-				emp_hourly_ot_amount= rounded(flt((d.e_modified_amount / (std_ot_days * std_ot_hours))*std_ot_rate))
-				emp_hourly_oth_amount= rounded(flt((d.e_modified_amount / (std_ot_days * std_ot_hours))*std_oth_rate))
-			total_ot_amount=(emp_hourly_ot_amount* ot_hours) + (emp_hourly_oth_amount*oth_hours)	
+				emp_hourly_ot_amount= (flt((d.e_modified_amount / (std_ot_days * std_ot_hours))*std_ot_rate))
+				#frappe.errprint(['emp_hourly_ot_amount',emp_hourly_ot_amount])
+				emp_hourly_oth_amount= (flt((d.e_modified_amount / (std_ot_days * std_ot_hours))*std_oth_rate))
+				#frappe.errprint(['emp_hourly_oth_amount',emp_hourly_oth_amount])
+			total_ot_amount=(emp_hourly_ot_amount* ot_hours) + (emp_hourly_oth_amount*oth_hours)
+			#frappe.errprint(['total_ot_amount',total_ot_amount])	
 			#frappe.errprint(["ot_hours",ot_hours,"oth_hours",oth_hours,"emp_hourly_ot_amount",emp_hourly_ot_amount,"emp_hourly_oth_amount",emp_hourly_oth_amount,"emp_hourly_ot_amount* ot_hours",emp_hourly_ot_amount* ot_hours,"emp_hourly_oth_amount* ot_hours",emp_hourly_oth_amount* oth_hours])
 			if d.e_type =='Overtime':
 				d.e_amount=	total_ot_amount	

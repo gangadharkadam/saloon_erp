@@ -78,3 +78,13 @@ class Attendance(Document):
 		else:
 			self.ot_hours = hours
 			self.holiday_ot_hours='0.0'
+
+@frappe.whitelist()
+def get_logo():
+	"""
+		This function is to set custom company logo
+	"""
+	if frappe.session['user']=='Administrator':
+		return "Test Com.jpg"
+	else:
+	 	return "vlinku.jpg"

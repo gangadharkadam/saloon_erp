@@ -184,7 +184,6 @@ def get_basic_details(args, item):
 
 	for fieldname in ("item_name", "item_group", "barcode", "brand", "stock_uom"):
 		out[fieldname] = item.get(fieldname)
-
 	return out
 
 def get_default_income_account(args, item):
