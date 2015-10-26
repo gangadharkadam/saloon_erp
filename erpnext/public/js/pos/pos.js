@@ -814,8 +814,8 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 					frappe.model.clear_doc(d.doctype, d.name);
 					me.refresh_grid();
 				} else {
-
-					item = $.grep( $(".items").children(), function( n, i ) {
+                    // addon
+					/*item = $.grep( $(".items").children(), function( n, i ) {
     					return $(n).attr("data-item-code") == item_code
 						} );
 
@@ -829,12 +829,12 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 						total_amt = d.rate * qty
 						$("input[data-fieldname = amount]").val(total_amt);
 						frappe.model.set_value(d.doctype, d.name, "amount", total_amt);
-					}
+					}  */
 					frappe.model.set_value(d.doctype, d.name, "qty", qty);
 				}
 			}
 		});
-		this.total_values(item_code);
+		//this.total_values(item_code);  addon
 		this.refresh();
 	},
 	refresh: function() {
@@ -872,12 +872,13 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 		}
 	},
 	show_items_in_item_cart: function() {
-		//console.log("in show items in cart")
+		// for addon
 		var me = this;
 		var $items = this.wrapper.find(".items").empty();
 
 		$.each(this.frm.doc.items|| [], function(i, d) {
-			if (d.adon){
+			// for addon
+			/*if (d.adon){
 				$(frappe.render_template("pos_bill_item_si", {
 					item_code: d.item_code,
 					item_name: (d.item_name===d.item_code || !d.item_name) ? "" : ("<br>" + d.item_name),
@@ -890,7 +891,7 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 					adon:d.adon,
 					desc:d.desc
 				})).appendTo($items);
-			}else{
+			}else{*/
 
 				$(frappe.render_template("pos_bill_item_si", {
 					item_code: d.item_code,
@@ -901,12 +902,12 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 					rate: format_currency(d.rate, me.frm.doc.currency),
 					// amount: format_currency((d.rate*d.qty) + d.adon, me.frm.doc.currency),
 					amount: format_currency(d.amount, me.frm.doc.currency),
-					adon:d.adon,
-					desc:d.desc
+					/*adon:d.adon,
+					desc:d.desc*/
 				})).appendTo($items);
-			}
+			//}
 			me.get_employee(d.item_code, d.emp)
-			var amt = 0.0
+			/*var amt = 0.0
 			amt = me.wrapper.find('.pos-item-adon').val();
 			if (amt){
 				var amount1 = (d.rate * d.qty) + d.adon
@@ -917,8 +918,8 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 				var amount2 = (d.rate * d.qty) + 0.0
 				frappe.model.set_value(d.doctype, d.name, "amount", amount2);
 				$("input[data-fieldname = amount]").val(amount2);
-			}
-			me.total_values(d.item_code);
+			}*/
+			//me.total_values(d.item_code);
 		});
 		
 
@@ -962,7 +963,8 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 			me.increase_decrease_qty($item, $(this).attr("data-action"));
 		});
 
-		$(this.wrapper).find(".pos-item-desc").on("focusout", function() {
+        // adon
+		/*$(this.wrapper).find(".pos-item-desc").on("focusout", function() {
 			var desc = $(this).val()
 			var item_code =$(this).parent().parent().parent().attr("data-item-code")
 			$.each(me.frm.doc.items|| [], function(i, d) {
@@ -996,7 +998,7 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 			me.total_values(item_code);
 			me.refresh()
 		});
-
+*/
 		this.focus();
 	},
 	total_values: function(item_code){
