@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 import frappe
 
-from frappe.utils import getdate, nowdate, flt,cstr
+from frappe.utils import getdate, nowdate, flt,cstr ,get_time
 from frappe import _
 from frappe.model.document import Document
 from erpnext.hr.utils import set_employee_name
@@ -36,8 +36,9 @@ class Attendance(Document):
 			frappe.throw(_("Attendance can not be marked for future dates"))
 
 	def validate_inout(self):
-		if (self.time_in > self.time_out):
-			frappe.throw(_("'Time In' cannot be greater that 'Time Out'"))
+		if (get_time(self.time_in) > get_time(self.time_out)):
+			frappe.throw(_("'Time In' ({0}) cannot be greater than 'Time Out' ({1})").format(self.time_in,
+					self.time_out))
 
 		if (self.time_out and not self.time_in ):
 			frappe.throw(_("Please enter 'Time In' as you have entered 'Time Out'"))
@@ -73,12 +74,11 @@ class Attendance(Document):
 		# calculate OT worked hours
 		
 		if self.time_in and self.time_out:
-			frappe.errprint("setting ot_hours from validate")
 			time_in = self.att_date+" "+self.time_in
 			time_out = self.att_date+" "+self.time_out
 			start = datetime.datetime.strptime(time_in, '%Y-%m-%d %H:%M:%S')
 			ends = datetime.datetime.strptime(time_out, '%Y-%m-%d %H:%M:%S')
-			diff =  ends -start
+			diff =  ends - start
 			hrs=cstr(diff).split(':')[0]
 			mnts=cstr(diff).split(':')[1]
 			std_ot_hours=frappe.db.get_value("Overtime Setting", self.company, "working_hours")
@@ -101,7 +101,11 @@ def get_logo():
 	"""
 		This function is to set custom company logo
 	"""
-	if frappe.session['user']=='Administrator':
-		return "Test Com.jpg"
-	else:
-	 	return "vlinku.jpg"
+	if frappe.session['user']:
+		company = frappe.db.sql("select company from `tabUser` where name = '%s'"%(frappe.session['user']),as_list=1)
+		if company:
+			logo = frappe.db.sql("""select file_name from `tabFile` where attached_to_doctype = 'Company' and 
+				attached_to_name = '%s'"""%(company[0][0]),as_list=1)
+			if logo:
+				company_logo = logo[0][0]
+				return company_logo
