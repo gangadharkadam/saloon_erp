@@ -89,6 +89,13 @@ def get_data():
 					"name": "HR Settings",
 					"description": _("Settings for HR Module")
 				},
+				# {
+				# 	"type": "page",
+				# 	"name": "permission-settings",
+				# 	"icon": "icon-sitemap",
+				# 	"label": _("Permission Settings"),
+				# 	"description": _("Permission Settings")
+				# },
 				{
 					"type": "doctype",
 					"name": "Employment Type",

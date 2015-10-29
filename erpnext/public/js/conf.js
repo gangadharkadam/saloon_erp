@@ -18,6 +18,9 @@ $(document).bind('toolbar_setup', function() {
 					$('.navbar-home').html('<img class="erpnext-icon" src="'+logo+'" />');
 
 				}
+				else{
+					$('.navbar-home').html('<img class="erpnext-icon" src="'+ frappe.urllib.get_base_url()+'/assets/erpnext/images/erp-icon1.svg" />');
+				}
 			}
 		});
 

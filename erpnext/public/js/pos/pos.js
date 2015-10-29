@@ -621,6 +621,8 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 			only_input: true,
 		});
 		this.mob_no.make_input();
+		// console.log(this.mob_no)
+		// $(this.mob_no.$input).val(mob_no)
 
 		this.party_field = frappe.ui.form.make_control({
 			df: {
@@ -643,6 +645,7 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 		
 		this.mob_no.$input.on("change", function() {
 			var mob_no=me.mob_no.$input.val();
+			// $(me.mob_no.$input).val(mob_no)
 			frappe.call({
 				method: 'erpnext.accounts.doctype.sales_invoice.pos.get_customer',
 				args:{
@@ -652,9 +655,13 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 					var cust = r.message[0][0]
 					$("input[data-fieldname = pos_party]").val(cust);
 					frappe.model.set_value(me.frm.doctype, me.frm.docname, me.party.toLowerCase(), cust);
+					// frappe.model.set_value(me.frm.doctype, me.frm.docname, me.mob_no, mob_no);
 				}
 			});
 			frappe.model.set_value(me.frm.doctype, me.frm.docname, this.value);
+			frappe.model.set_value(me.frm.doctype, me.frm.docname, "mob_no", mob_no);
+			// me.frm.doc.mob_no = mob_no
+			// $("input[data-fieldname = mob_no]").val(mob_no);
 		});
 	},
 	make_party: function() {
@@ -1024,10 +1031,10 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 	},
 	focus: function() {
 		if(this.frm.doc[this.party.toLowerCase()]) {
-			this.search.$input.focus();
+			this.mob_no.$input.focus();
 		} else {
 			if(!(this.frm.doctype == "Quotation" && this.frm.doc.quotation_to!="Customer"))
-				this.party_field.$input.focus();
+				this.mob_no.$input.focus();
 		}
 	},
 	get_employee: function(item_code, emp) {

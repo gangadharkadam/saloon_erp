@@ -61,7 +61,7 @@ def get_mobile_no(doctype, txt, searchfield, start, page_len, filters):
 
 @frappe.whitelist()
 def get_customer(mob_no):
-	get_cust = frappe.db.sql("""select customer from `tabContact` where mobile_no=%s"""%(mob_no),as_list=1)
+	get_cust = frappe.db.sql("""select customer from `tabContact` where mobile_no='%s'"""%(mob_no),as_list=1)
 	return get_cust
 
 @frappe.whitelist()
