@@ -470,7 +470,7 @@
  "is_submittable": 0, 
  "issingle": 0, 
  "istable": 0, 
- "modified": "2015-10-28 18:33:36.067361", 
+ "modified": "2015-10-31 15:00:30.502259", 
  "modified_by": "Administrator", 
  "module": "Utilities", 
  "name": "Contact", 
@@ -920,5 +920,6 @@
  ], 
  "read_only": 0, 
  "read_only_onload": 0, 
- "search_fields": "phone, customer"
+ "search_fields": "mobile_no, customer", 
+ "sort_field": "mobile_no"
 }

@@ -344,7 +344,7 @@
  "issingle": 0, 
  "istable": 0, 
  "max_attachments": 3, 
- "modified": "2015-10-28 13:06:33.738475", 
+ "modified": "2015-11-03 11:47:34.693617", 
  "modified_by": "Administrator", 
  "module": "Accounts", 
  "name": "C-Form", 
@@ -428,6 +428,7 @@
    "set_user_permissions": 0, 
    "share": 1, 
    "submit": 1, 
+   "user_permission_doctypes": "[\"Company\"]", 
    "write": 1
   }, 
   {

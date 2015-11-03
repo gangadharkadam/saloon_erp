@@ -56,7 +56,7 @@ def get_items(price_list, sales_or_purchase, item=None):
 
 @frappe.whitelist()
 def get_mobile_no(doctype, txt, searchfield, start, page_len, filters):
-	get_cont = frappe.db.sql("""select mobile_no, customer from `tabContact`""",as_list=1)
+	get_cont = frappe.db.sql("""select mobile_no, customer from `tabContact` where customer is not null""",as_list=1)
 	return get_cont
 
 @frappe.whitelist()

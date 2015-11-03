@@ -1092,7 +1092,7 @@
  "is_submittable": 0, 
  "issingle": 0, 
  "istable": 0, 
- "modified": "2015-10-28 12:38:50.850335", 
+ "modified": "2015-11-03 11:55:06.331649", 
  "modified_by": "Administrator", 
  "module": "Setup", 
  "name": "Company", 
@@ -1116,6 +1116,7 @@
    "set_user_permissions": 0, 
    "share": 0, 
    "submit": 0, 
+   "user_permission_doctypes": "[\"Company\"]", 
    "write": 1
   }, 
   {
@@ -1133,9 +1134,10 @@
    "read": 1, 
    "report": 1, 
    "role": "Admin", 
-   "set_user_permissions": 0, 
+   "set_user_permissions": 1, 
    "share": 1, 
    "submit": 0, 
+   "user_permission_doctypes": "[\"Company\"]", 
    "write": 1
   }, 
   {

@@ -1893,7 +1893,7 @@
  "is_submittable": 0, 
  "issingle": 0, 
  "istable": 0, 
- "modified": "2015-10-28 16:16:53.836931", 
+ "modified": "2015-10-31 15:52:37.123754", 
  "modified_by": "Administrator", 
  "module": "HR", 
  "name": "Employee", 
@@ -1934,7 +1934,7 @@
    "read": 1, 
    "report": 1, 
    "role": "Admin", 
-   "set_user_permissions": 0, 
+   "set_user_permissions": 1, 
    "share": 1, 
    "submit": 0, 
    "write": 1

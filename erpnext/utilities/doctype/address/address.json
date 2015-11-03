@@ -536,7 +536,7 @@
  "is_submittable": 0, 
  "issingle": 0, 
  "istable": 0, 
- "modified": "2015-10-28 15:01:04.582222", 
+ "modified": "2015-10-31 15:51:36.540846", 
  "modified_by": "Administrator", 
  "module": "Utilities", 
  "name": "Address", 
@@ -697,7 +697,7 @@
    "read": 1, 
    "report": 1, 
    "role": "Admin", 
-   "set_user_permissions": 0, 
+   "set_user_permissions": 1, 
    "share": 1, 
    "submit": 0, 
    "write": 1

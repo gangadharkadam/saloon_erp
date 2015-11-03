@@ -4,7 +4,7 @@
  "docstatus": 0, 
  "doctype": "Page", 
  "icon": "icon-th", 
- "modified": "2014-08-08 05:59:33.045012", 
+ "modified": "2015-10-30 14:49:07.746570", 
  "modified_by": "Administrator", 
  "module": "Accounts", 
  "name": "pos", 
@@ -19,6 +19,18 @@
   }, 
   {
    "role": "Accounts User"
+  }, 
+  {
+   "role": "Admin"
+  }, 
+  {
+   "role": "Accounts Read"
+  }, 
+  {
+   "role": "Accounts Write"
+  }, 
+  {
+   "role": "Accounts Create"
   }
  ], 
  "script": null, 

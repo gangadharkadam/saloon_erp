@@ -188,6 +188,15 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 			me.frm.doc.base_net_total += item.base_net_amount;
 		});
 
+		if(in_list(["Sales Invoice"], this.frm.doc.doctype)) {
+			// me.set_in_company_currency(me.frm.doc, ["adon"]);
+			me.frm.doc.total += flt(me.frm.doc.adon)
+			me.frm.doc.base_total += (me.frm.doc.adon)
+			me.frm.doc.net_total += (me.frm.doc.adon)
+			me.frm.doc.base_net_total += (me.frm.doc.adon)
+			me.set_in_company_currency(me.frm.doc, ["adon"]);
+		}
+
 		frappe.model.round_floats_in(this.frm.doc, ["total", "base_total", "net_total", "base_net_total"]);
 	},
 

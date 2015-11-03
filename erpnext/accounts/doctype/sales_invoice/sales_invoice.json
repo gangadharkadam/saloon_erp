@@ -2951,7 +2951,7 @@
  "is_submittable": 1, 
  "issingle": 0, 
  "istable": 0, 
- "modified": "2015-10-28 12:26:07.113696", 
+ "modified": "2015-10-30 12:57:20.915684", 
  "modified_by": "Administrator", 
  "module": "Accounts", 
  "name": "Sales Invoice", 
@@ -2980,7 +2980,7 @@
   {
    "amend": 1, 
    "apply_user_permissions": 1, 
-   "cancel": 0, 
+   "cancel": 1, 
    "create": 1, 
    "delete": 1, 
    "email": 1, 
