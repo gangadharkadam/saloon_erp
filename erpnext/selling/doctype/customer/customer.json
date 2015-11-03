@@ -797,7 +797,7 @@
  "is_submittable": 0, 
  "issingle": 0, 
  "istable": 0, 
- "modified": "2015-10-28 18:28:12.815663", 
+ "modified": "2015-11-03 16:05:27.911932", 
  "modified_by": "Administrator", 
  "module": "Selling", 
  "name": "Customer", 
@@ -981,6 +981,7 @@
    "set_user_permissions": 0, 
    "share": 1, 
    "submit": 0, 
+   "user_permission_doctypes": "[\"Company\",\"Customer\"]", 
    "write": 1
   }, 
   {

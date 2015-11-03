@@ -281,7 +281,7 @@
  "is_submittable": 0, 
  "issingle": 0, 
  "istable": 0, 
- "modified": "2015-10-28 15:11:16.805227", 
+ "modified": "2015-11-03 16:01:57.760089", 
  "modified_by": "Administrator", 
  "module": "Setup", 
  "name": "Territory", 
@@ -366,6 +366,7 @@
    "set_user_permissions": 0, 
    "share": 1, 
    "submit": 0, 
+   "user_permission_doctypes": "[\"Territory\"]", 
    "write": 1
   }, 
   {

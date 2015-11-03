@@ -2951,7 +2951,7 @@
  "is_submittable": 1, 
  "issingle": 0, 
  "istable": 0, 
- "modified": "2015-10-30 12:57:20.915684", 
+ "modified": "2015-11-03 15:55:03.228996", 
  "modified_by": "Administrator", 
  "module": "Accounts", 
  "name": "Sales Invoice", 
@@ -2995,6 +2995,7 @@
    "set_user_permissions": 0, 
    "share": 1, 
    "submit": 1, 
+   "user_permission_doctypes": "[\"Company\",\"Currency\",\"Print Format\",\"Sales Invoice\",\"Sales Partner\",\"Sales Taxes and Charges Template\",\"Shipping Rule\",\"Terms and Conditions\"]", 
    "write": 1
   }, 
   {

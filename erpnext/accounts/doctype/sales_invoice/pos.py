@@ -2,6 +2,7 @@
 # License: GNU General Public License v3. See license.txt
 
 from __future__ import unicode_literals
+from frappe.desk.reportview import get_match_cond
 import frappe
 
 @frappe.whitelist()
@@ -54,10 +55,10 @@ def get_items(price_list, sales_or_purchase, item=None):
 			{order_by}
 			i.name""".format(condition=condition, order_by=order_by), args, as_dict=1)
 
-@frappe.whitelist()
-def get_mobile_no(doctype, txt, searchfield, start, page_len, filters):
-	get_cont = frappe.db.sql("""select mobile_no, customer from `tabContact` where customer is not null""",as_list=1)
-	return get_cont
+# @frappe.whitelist()
+# def get_mobile_no(doctype, txt, searchfield, start, page_len, filters):
+# 	get_cont = frappe.db.sql("""select mobile_no, customer from `tabContact` where customer is not null""",as_list=1)
+# 	return get_cont
 
 @frappe.whitelist()
 def get_customer(mob_no):
@@ -68,3 +69,24 @@ def get_customer(mob_no):
 def get_all_employee(doctype, txt, searchfield, start, page_len, filters):
 	employees = frappe.db.sql("""select name from `tabEmployee`""",as_list=1)
 	return employees
+
+@frappe.whitelist()
+def get_mobile_no(doctype, txt, searchfield, start, page_len, filters):
+   	#frappe.errprint(get_match_cond(doctype))
+	return frappe.db.sql("""select mobile_no, customer from `tabContact` where customer is not null
+		and ({key} like %(txt)s
+		or mobile_no like %(txt)s)
+		{mcond}
+		order by
+		if(locate(%(_txt)s, mobile_no), locate(%(_txt)s, mobile_no), 99999),
+		if(locate(%(_txt)s, customer), locate(%(_txt)s, customer), 99999),
+		mobile_no, customer
+		limit %(start)s, %(page_len)s""".format(**{
+		'key': searchfield,
+		'mcond': get_match_cond(doctype)
+		}), {
+		'txt': "%%%s%%" % txt,
+		'_txt': txt.replace("%", ""),
+		'start': start,
+		'page_len': page_len
+	})
