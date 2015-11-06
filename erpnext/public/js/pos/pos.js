@@ -664,7 +664,6 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 		});
 
 		$("input[data-fieldname = mob_no]").val(me.frm.doc.mob_no);
-
 	},
 	make_party: function() {
 		var me = this;
@@ -846,6 +845,7 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 		this.refresh();
 	},
 	refresh: function() {
+		console.log("in refresh");
 		var me = this;
 
 		this.refresh_item_list();
@@ -864,17 +864,16 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 		}
 	},
 	refresh_fields: function() {
+		console.log("in refresh_fields")
 		this.party_field.set_input(this.frm.doc[this.party.toLowerCase()]);
 		this.wrapper.find('input.discount-amount').val(this.frm.doc.discount_amount);
-		// this.wrapper.find('input.adon').val(this.frm.doc.adon);
-		// this.wrapper.find('input.adon-description').val(this.frm.doc.adon_description);
-		// this.wrapper.find('input.mob_no').val(this.frm.doc.mob_no);
-		// // this.frm.script_manager.trigger("calculate_taxes_and_totals");
+		this.wrapper.find('input.adon').val(this.frm.doc.adon);
+		this.wrapper.find('input.adon-description').val(this.frm.doc.adon_description);
+		this.wrapper.find('input.party-area1').val(this.frm.doc.mob_no);
 
 		this.show_items_in_item_cart();
 		this.show_taxes();
 		this.set_totals();
-		this.get_forms_value();
 	},
 	refresh_item_list: function() {
 		var me = this;
@@ -884,72 +883,28 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 			this.make_item_list();
 		}
 	},
-	get_forms_value: function(){
-		var me = this;
-		me.wrapper.find('input.adon').val(this.frm.doc.adon);
-		me.wrapper.find('input.adon-description').val(this.frm.doc.adon_description);
-		me.wrapper.find('input.mob_no').val(this.frm.doc.mob_no);
-		// me.frm.script_manager.trigger("calculate_taxes_and_totals");
-	},
 	show_items_in_item_cart: function() {
 		// console.log("show_items_in_item_cart")
-		// for addon
 		var me = this;
 		var $items = this.wrapper.find(".items").empty();
 
 		$.each(this.frm.doc.items|| [], function(i, d) {
-			// for addon
-			/*if (d.adon){
-				$(frappe.render_template("pos_bill_item_si", {
-					item_code: d.item_code,
-					item_name: (d.item_name===d.item_code || !d.item_name) ? "" : ("<br>" + d.item_name),
-					qty: d.qty,
-					actual_qty: d.actual_qty,
-					projected_qty: d.projected_qty,
-					rate: format_currency(d.rate, me.frm.doc.currency),
-					amount: format_currency((d.rate*d.qty) + d.adon, me.frm.doc.currency),
-					// amount: format_currency(d.amount, me.frm.doc.currency),
-					adon:d.adon,
-					desc:d.desc
-				})).appendTo($items);
-			}else{*/
-
-				$(frappe.render_template("pos_bill_item_si", {
-					item_code: d.item_code,
-					item_name: (d.item_name===d.item_code || !d.item_name) ? "" : ("<br>" + d.item_name),
-					qty: d.qty,
-					actual_qty: d.actual_qty,
-					projected_qty: d.projected_qty,
-					rate: format_currency(d.rate, me.frm.doc.currency),
-					// amount: format_currency((d.rate*d.qty) + d.adon, me.frm.doc.currency),
-					amount: format_currency(d.amount, me.frm.doc.currency),
-					/*adon:d.adon,
-					desc:d.desc*/
-				})).appendTo($items);
-			//}
+			$(frappe.render_template("pos_bill_item_si", {
+				item_code: d.item_code,
+				item_name: (d.item_name===d.item_code || !d.item_name) ? "" : ("<br>" + d.item_name),
+				qty: d.qty,
+				actual_qty: d.actual_qty,
+				projected_qty: d.projected_qty,
+				rate: format_currency(d.rate, me.frm.doc.currency),
+				amount: format_currency(d.amount, me.frm.doc.currency)
+			})).appendTo($items);
 			me.get_employee(d.item_code, d.emp)
-			/*var amt = 0.0
-			amt = me.wrapper.find('.pos-item-adon').val();
-			if (amt){
-				var amount1 = (d.rate * d.qty) + d.adon
-				$("input[data-fieldname = amount]").val(amount1);
-				frappe.model.set_value(d.doctype, d.name, "amount", amount1);
-			}
-			else{
-				var amount2 = (d.rate * d.qty) + 0.0
-				frappe.model.set_value(d.doctype, d.name, "amount", amount2);
-				$("input[data-fieldname = amount]").val(amount2);
-			}*/
-			//me.total_values(d.item_code);
-			// 
 		});
 		
-
 		this.wrapper.find("input.pos-item-qty").on("focus", function() {
 			$(this).select();
 		});
 
-		// this.add_adon_value();
 	},
 	
 	show_taxes: function() {
@@ -970,10 +925,6 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 		});
 	},
 	set_totals: function() {
-		// console.log("set_totals")
-		// console.log(this.wrapper.find(".net-total").text());
-		// console.log(this.wrapper.find(".grand-total").text());
-
 		var me = this;
 		this.wrapper.find(".net-total").text(format_currency(me.frm.doc["net_total"], me.frm.doc.currency));
 		this.wrapper.find(".grand-total").text(format_currency(me.frm.doc.grand_total, me.frm.doc.currency));
@@ -1037,13 +988,6 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 		this.wrapper.find("input.adon").on("change", function() {
 			// var adon = 0.0
 			var adon = parseInt($(this).val());
-			console.log(adon)
-			if (!(adon)){
-				console.log("hiii")
-				// var val1 = 0.0
-				// $("input[data-fieldname = adon]").val(val1);
-				// frappe.model.set_value(me.frm.doctype, me.frm.docname, "adon", val1);
-			}
 			frappe.model.set_value(me.frm.doctype, me.frm.docname, "adon", flt(adon));
 			me.frm.script_manager.trigger("calculate_taxes_and_totals");
 		});
@@ -1187,6 +1131,7 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 		this.refresh_grid();
 	},
 	refresh_grid: function() {
+		console.log("in refresh_grid");
 		this.frm.dirty();
 		this.frm.fields_dict["items"].grid.refresh();
 		this.frm.script_manager.trigger("calculate_taxes_and_totals");

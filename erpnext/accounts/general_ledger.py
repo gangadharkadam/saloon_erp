@@ -112,6 +112,8 @@ def round_off_debit_credit(gl_map):
 	
 	debit_credit_diff = 0.0
 	for entry in gl_map:
+		frappe.errprint("hii")
+		frappe.errprint(entry)
 		entry.debit = flt(entry.debit, precision)
 		entry.credit = flt(entry.credit, precision)
 		debit_credit_diff += entry.debit - entry.credit
