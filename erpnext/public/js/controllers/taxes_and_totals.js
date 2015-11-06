@@ -190,11 +190,24 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 
 		if(in_list(["Sales Invoice"], this.frm.doc.doctype)) {
 			// me.set_in_company_currency(me.frm.doc, ["adon"]);
-			me.frm.doc.total += flt(me.frm.doc.adon)
-			me.frm.doc.base_total += (me.frm.doc.adon)
-			me.frm.doc.net_total += (me.frm.doc.adon)
-			me.frm.doc.base_net_total += (me.frm.doc.adon)
-			me.set_in_company_currency(me.frm.doc, ["adon"]);
+			// console.log(me.frm.doc.adon)
+			// console.log(flt(me.frm.doc.adon))
+			if(me.frm.doc.adon){
+				me.frm.doc.total += flt(me.frm.doc.adon)
+				me.frm.doc.base_total += flt(me.frm.doc.adon)
+				me.frm.doc.net_total += flt(me.frm.doc.adon)
+				me.frm.doc.base_net_total += flt(me.frm.doc.adon)
+				me.set_in_company_currency(me.frm.doc, ["adon"]);
+			}
+			else{
+				me.frm.doc.adon = 0.0
+				me.frm.doc.total += flt(me.frm.doc.adon)
+				me.frm.doc.base_total += flt(me.frm.doc.adon)
+				me.frm.doc.net_total += flt(me.frm.doc.adon)
+				me.frm.doc.base_net_total += flt(me.frm.doc.adon)
+				me.set_in_company_currency(me.frm.doc, ["adon"]);
+			}
+			
 		}
 
 		frappe.model.round_floats_in(this.frm.doc, ["total", "base_total", "net_total", "base_net_total"]);
@@ -259,7 +272,9 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 
 				// in tax.total, accumulate grand total for each item
 				tax.total += tax.grand_total_for_current_item;
-
+				// console.log("final Grand total")
+				// console.log(me.frm.doc.adon)
+				// console.log(tax.total)
 				// set precision in the last item iteration
 				if (n == me.frm.doc["items"].length - 1) {
 					me.round_off_totals(tax);
@@ -318,7 +333,7 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 	},
 
 	round_off_totals: function(tax) {
-		tax.total = flt(tax.total, precision("total", tax));
+		tax.total = flt(tax.total + this.frm.doc.adon, precision("total", tax));
 		tax.tax_amount = flt(tax.tax_amount, precision("tax_amount", tax));
 		tax.tax_amount_after_discount_amount = flt(tax.tax_amount_after_discount_amount, precision("tax_amount", tax));
 
@@ -363,11 +378,17 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 		// Changing sequence can cause roundiing issue and on-screen discrepency
 		var me = this;
 		var tax_count = this.frm.doc["taxes"] ? this.frm.doc["taxes"].length : 0;
+		// console.log("calculate GT")
+		// console.log(tax_count)
 		this.frm.doc.grand_total = flt(tax_count ? this.frm.doc["taxes"][tax_count - 1].total : this.frm.doc.net_total);
+		// console.log(this.frm.doc.grand_total)
 
 		if(in_list(["Quotation", "Sales Order", "Delivery Note", "Sales Invoice"], this.frm.doc.doctype)) {
 			this.frm.doc.base_grand_total = (this.frm.doc.total_taxes_and_charges) ?
 				flt(this.frm.doc.grand_total * this.frm.doc.conversion_rate) : this.frm.doc.base_net_total;
+				console.log("totaallll")
+				console.log(this.frm.doc.base_grand_total)
+				// console.log(this.frm.doc.base_net_total)
 		} else {
 			// other charges added/deducted
 			this.frm.doc.taxes_and_charges_added = this.frm.doc.taxes_and_charges_deducted = 0.0;

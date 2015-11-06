@@ -277,8 +277,8 @@
  "is_submittable": 1, 
  "issingle": 0, 
  "istable": 0, 
- "modified": "2015-10-28 17:23:43.489634", 
- "modified_by": "tejal@gmail.com", 
+ "modified": "2015-11-03 17:04:04.083809", 
+ "modified_by": "Administrator", 
  "module": "HR", 
  "name": "Attendance", 
  "owner": "ashwini@webnotestech.com", 
@@ -304,9 +304,9 @@
    "write": 1
   }, 
   {
-   "amend": 0, 
+   "amend": 1, 
    "apply_user_permissions": 1, 
-   "cancel": 0, 
+   "cancel": 1, 
    "create": 1, 
    "delete": 1, 
    "email": 1, 
@@ -320,7 +320,7 @@
    "role": "Admin", 
    "set_user_permissions": 0, 
    "share": 1, 
-   "submit": 0, 
+   "submit": 1, 
    "write": 1
   }, 
   {

@@ -573,6 +573,7 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 
 		this.check_transaction_type();
 		this.make();
+		// this.get_forms_value();
 
 		var me = this;
 		$(this.frm.wrapper).on("refresh-fields", function() {
@@ -842,8 +843,6 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 				}
 			}
 		});
-		//this.total_values(item_code);  addon
-		// this.add_adon_value();
 		this.refresh();
 	},
 	refresh: function() {
@@ -851,11 +850,9 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 
 		this.refresh_item_list();
 		this.refresh_fields();
-		// this.add_adon_value();
 
 		if (this.frm.doc.docstatus===0) {
 			this.call_when_local();
-			// this.add_adon_value();
 		}
 
 		this.disable_text_box_and_button();
@@ -869,10 +866,15 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 	refresh_fields: function() {
 		this.party_field.set_input(this.frm.doc[this.party.toLowerCase()]);
 		this.wrapper.find('input.discount-amount').val(this.frm.doc.discount_amount);
+		// this.wrapper.find('input.adon').val(this.frm.doc.adon);
+		// this.wrapper.find('input.adon-description').val(this.frm.doc.adon_description);
+		// this.wrapper.find('input.mob_no').val(this.frm.doc.mob_no);
+		// // this.frm.script_manager.trigger("calculate_taxes_and_totals");
 
 		this.show_items_in_item_cart();
 		this.show_taxes();
 		this.set_totals();
+		this.get_forms_value();
 	},
 	refresh_item_list: function() {
 		var me = this;
@@ -881,6 +883,13 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 			this.price_list = this.frm.doc[this.price_list_field];
 			this.make_item_list();
 		}
+	},
+	get_forms_value: function(){
+		var me = this;
+		me.wrapper.find('input.adon').val(this.frm.doc.adon);
+		me.wrapper.find('input.adon-description').val(this.frm.doc.adon_description);
+		me.wrapper.find('input.mob_no').val(this.frm.doc.mob_no);
+		// me.frm.script_manager.trigger("calculate_taxes_and_totals");
 	},
 	show_items_in_item_cart: function() {
 		// console.log("show_items_in_item_cart")
@@ -1026,8 +1035,15 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 	add_adon_value: function(){
 		var me = this;
 		this.wrapper.find("input.adon").on("change", function() {
-			var adon = 0.0
-			adon = parseInt($(this).val());
+			// var adon = 0.0
+			var adon = parseInt($(this).val());
+			console.log(adon)
+			if (!(adon)){
+				console.log("hiii")
+				// var val1 = 0.0
+				// $("input[data-fieldname = adon]").val(val1);
+				// frappe.model.set_value(me.frm.doctype, me.frm.docname, "adon", val1);
+			}
 			frappe.model.set_value(me.frm.doctype, me.frm.docname, "adon", flt(adon));
 			me.frm.script_manager.trigger("calculate_taxes_and_totals");
 		});

@@ -71,6 +71,8 @@ class Company(Document):
 
 		frappe.clear_cache()
 
+		# frappe.db.sql("update `tabCompany` set company = '%s' where company_name = '%s' "%(self.name, self.name))
+
 	def install_country_fixtures(self):
 		path = os.path.join(os.path.dirname(__file__), "fixtures", self.country.lower())
 		if os.path.exists(path.encode("utf-8")):

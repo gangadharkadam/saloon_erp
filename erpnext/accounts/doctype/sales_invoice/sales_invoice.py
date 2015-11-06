@@ -370,6 +370,10 @@ class SalesInvoice(SellingController):
 
 		if flt(self.paid_amount) + flt(self.write_off_amount) \
 				- flt(self.base_grand_total) > 1/(10**(self.precision("base_grand_total") + 1)):
+			frappe.errprint("invoice")
+			frappe.errprint(self.paid_amount)
+			frappe.errprint(self.write_off_amount)
+			frappe.errprint(self.base_grand_total)
 			frappe.throw(_("""Paid amount + Write Off Amount can not be greater than Grand Total"""))
 
 

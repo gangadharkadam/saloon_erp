@@ -10,6 +10,7 @@ frappe.query_reports["Gross Profit"] = {
 			"options": "Company",
 			"reqd": 1,
 			"default": frappe.defaults.get_user_default("company")
+			// "default": frappe.defaults.get_user_default_saloon("company")
 		},
 		{
 			"fieldname":"from_date",

@@ -7,12 +7,13 @@ import frappe
 
 @frappe.whitelist()
 def get_items(price_list, sales_or_purchase, item=None):
+	company = frappe.db.sql("""select company from `tabUser` where name='%s'"""%(frappe.session.user),as_list=1)
 	condition = ""
 	order_by = ""
 	args = {"price_list": price_list}
 
 	if sales_or_purchase == "Sales":
-		condition = "i.is_sales_item=1"
+		condition = "i.is_sales_item=1 and i.company = '%s'"%(company[0][0])
 	else:
 		condition = "i.is_purchase_item=1"
 
@@ -53,7 +54,7 @@ def get_items(price_list, sales_or_purchase, item=None):
 			{condition}
 		order by
 			{order_by}
-			i.name""".format(condition=condition, order_by=order_by), args, as_dict=1)
+			i.name """.format(condition=condition, order_by=order_by), args, as_dict=1)
 
 # @frappe.whitelist()
 # def get_mobile_no(doctype, txt, searchfield, start, page_len, filters):
@@ -67,12 +68,14 @@ def get_customer(mob_no):
 
 @frappe.whitelist()
 def get_all_employee(doctype, txt, searchfield, start, page_len, filters):
-	employees = frappe.db.sql("""select name from `tabEmployee`""",as_list=1)
+	frappe.errprint(frappe.session.user)
+	company = frappe.db.sql("""select company from `tabUser` where name = '%s'"""%(frappe.session.user),as_list=1)
+	frappe.errprint(company)
+	employees = frappe.db.sql("""select name from `tabEmployee` where company = '%s'"""%(company[0][0]),as_list=1)
 	return employees
 
 @frappe.whitelist()
 def get_mobile_no(doctype, txt, searchfield, start, page_len, filters):
-   	#frappe.errprint(get_match_cond(doctype))
 	return frappe.db.sql("""select mobile_no, customer from `tabContact` where customer is not null
 		and ({key} like %(txt)s
 		or mobile_no like %(txt)s)

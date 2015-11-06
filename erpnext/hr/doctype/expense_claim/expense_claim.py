@@ -64,8 +64,16 @@ class ExpenseClaim(Document):
 
 @frappe.whitelist()
 def get_expense_approver(doctype, txt, searchfield, start, page_len, filters):
-	return frappe.db.sql("""
-		select u.name, concat(u.first_name, ' ', u.last_name)
-		from tabUser u, tabUserRole r
-		where u.name = r.parent and r.role = 'Expense Approver' and u.name like %s
-	""", ("%" + txt + "%"))
+	company = frappe.db.sql("""select company from `tabUser` where name='%s'"""%(frappe.session.user),as_list=1)
+	if frappe.session.user=="Administrator":
+		return frappe.db.sql("""
+			select u.name, concat(u.first_name, ' ', u.last_name)
+			from tabUser u, tabUserRole r
+			where u.name = r.parent and r.role = 'Expense Approver' and u.name like %s
+			""", ("%" + txt + "%"))
+	else:
+		return frappe.db.sql("""
+			select u.name, concat(u.first_name, ' ', u.last_name)
+			from tabUser u, tabUserRole r
+			where u.name = r.parent and r.role = 'Expense Approver' and u.name like %s and company = %s
+		""", ("%" + txt + "%", company[0][0]))
