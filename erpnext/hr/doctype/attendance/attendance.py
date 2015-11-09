@@ -72,29 +72,56 @@ class Attendance(Document):
 
 	def calculate_ot(self):
 		# calculate OT worked hours
-		
+		h_list=frappe.db.sql("""select holiday_list from `tabEmployee` where name = '%s'"""%(self.employee),as_list=1)
 		if self.time_in and self.time_out:
 			time_in = self.att_date+" "+self.time_in
 			time_out = self.att_date+" "+self.time_out
 			start = datetime.datetime.strptime(time_in, '%Y-%m-%d %H:%M:%S')
 			ends = datetime.datetime.strptime(time_out, '%Y-%m-%d %H:%M:%S')
 			diff =  ends - start
+			frappe.errprint(diff)
 			hrs=cstr(diff).split(':')[0]
 			mnts=cstr(diff).split(':')[1]
+			frappe.errprint(hrs)
+			frappe.errprint(mnts)
 			std_ot_hours=frappe.db.get_value("Overtime Setting", self.company, "working_hours")
+			frappe.errprint(std_ot_hours)
 			if not std_ot_hours:
 				std_ot_hours=frappe.db.get_value("Overtime Setting", 'vlinku', "working_hours")
-			is_holiday=frappe.db.sql("select h.description from `tabHoliday List` hl ,`tabHoliday` h where hl.name=h.parent and h.holiday_date='%s' and h.description not in ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')" %(self.att_date))
+			if h_list:
+				is_holiday=frappe.db.sql("select h.description from `tabHoliday List` hl ,`tabHoliday` h where hl.name=h.parent and h.holiday_date='%s' and hl.name='%s' and h.description not in ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')" %(self.att_date,h_list[0][0]))
+				is_fot=frappe.db.sql("select h.description from `tabHoliday List` hl ,`tabHoliday` h where hl.name=h.parent and h.holiday_date='%s' and hl.name='%s'  and h.description in ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')" %(self.att_date,h_list[0][0]),as_list=1)
+				
 			if flt(std_ot_hours)>=flt(hrs+"."+mnts) :
+				frappe.errprint("if")
 				hours=0.0
 			else: 
+				frappe.errprint("else")
 				hours=flt(hrs+"."+mnts)-flt(std_ot_hours)
+				frappe.errprint(hours)
 			if is_holiday:
-				self.holiday_ot_hours = hours
+				# self.holiday_ot_hours = hours
+				self.holiday_ot_hours = flt(hrs+"."+mnts)
 				self.ot_hours='0.0'
+				self.fot='0.0'
 			else:
-				self.ot_hours = hours
-				self.holiday_ot_hours='0.0'
+				if is_fot:
+					if is_fot[0][0]=="Friday":
+						frappe.errprint("fot")
+						self.ot_hours = '0.0'
+						self.holiday_ot_hours='0.0'
+						self.fot=flt(hrs+"."+mnts)
+					# else:
+					# 	frappe.errprint("normal holiday")
+					# 	self.ot_hours = flt(hrs+"."+mnts)
+					# 	self.holiday_ot_hours='0.0'
+					# 	self.fot='0.0'
+				else:
+					frappe.errprint("working day")
+					self.ot_hours = hours
+					self.holiday_ot_hours='0.0'
+					self.fot='0.0'
+
 
 @frappe.whitelist()
 def get_logo():

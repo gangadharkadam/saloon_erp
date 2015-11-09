@@ -8,6 +8,11 @@ cur_frm.cscript.onload = function(doc, cdt, cdn) {
 	if(doc.__islocal) cur_frm.set_value("att_date", get_today());
 }
 
+cur_frm.cscript.refresh = function(doc, cdt, cdn) {
+	// refresh_fields("")
+	cur_frm.refresh_fields();
+}
+
 cur_frm.fields_dict.employee.get_query = function(doc,cdt,cdn) {
 	return{
 		query: "erpnext.controllers.queries.employee_query"
