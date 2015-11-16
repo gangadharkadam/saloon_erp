@@ -370,10 +370,10 @@ class SalesInvoice(SellingController):
 
 		if flt(self.paid_amount) + flt(self.write_off_amount) \
 				- flt(self.base_grand_total + self.adon) > 1/(10**(self.precision("base_grand_total") + 1)):
-			# frappe.errprint("invoice")
-			# frappe.errprint(self.paid_amount)
-			# frappe.errprint(self.write_off_amount)
-			# frappe.errprint(self.base_grand_total)
+			
+			
+			
+			
 			frappe.throw(_("""Paid amount + Write Off Amount can not be greater than Grand Total"""))
 
 
@@ -510,7 +510,7 @@ class SalesInvoice(SellingController):
 
 		# merge gl entries before adding pos entries
 		gl_entries = merge_similar_entries(gl_entries)
-
+	
 		self.make_pos_gl_entries(gl_entries)
 
 		self.make_write_off_gl_entry(gl_entries)
@@ -550,6 +550,7 @@ class SalesInvoice(SellingController):
 
 	def make_item_gl_entries(self, gl_entries):
 		# income account gl entries
+		adon_added = False
 		for item in self.get("items"):
 			if flt(item.base_net_amount):
 				account_currency = get_account_currency(item.income_account)
@@ -557,12 +558,13 @@ class SalesInvoice(SellingController):
 					self.get_gl_dict({
 						"account": item.income_account,
 						"against": self.customer,
-						"credit": item.base_net_amount,
+						"credit": item.base_net_amount + (flt(self.adon) or 0.0 if adon_added else 0.0),
 						"credit_in_account_currency": item.base_net_amount \
 							if account_currency==self.company_currency else item.net_amount,
 						"cost_center": item.cost_center
 					}, account_currency)
 				)
+			adon_added = True
 
 		# expense account gl entries
 		if cint(frappe.defaults.get_global_default("auto_accounting_for_stock")) \

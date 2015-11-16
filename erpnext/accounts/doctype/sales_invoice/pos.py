@@ -68,9 +68,7 @@ def get_customer(mob_no):
 
 @frappe.whitelist()
 def get_all_employee(doctype, txt, searchfield, start, page_len, filters):
-	frappe.errprint(frappe.session.user)
 	company = frappe.db.sql("""select company from `tabUser` where name = '%s'"""%(frappe.session.user),as_list=1)
-	frappe.errprint(company)
 	employees = frappe.db.sql("""select name from `tabEmployee` where company = '%s'"""%(company[0][0]),as_list=1)
 	return employees
 
