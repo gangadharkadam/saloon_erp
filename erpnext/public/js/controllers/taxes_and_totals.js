@@ -43,7 +43,7 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 	},
 
 	validate_conversion_rate: function() {
-		console.log("validate_conversion_rate")
+		// console.log("validate_conversion_rate")
 		this.frm.doc.conversion_rate = flt(this.frm.doc.conversion_rate, precision("conversion_rate"));
 		var conversion_rate_label = frappe.meta.get_label(this.frm.doc.doctype, "conversion_rate",
 			this.frm.doc.name);
@@ -67,7 +67,7 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 	},
 
 	calculate_item_values: function() {
-		console.log("calculate_item_values")
+		// console.log("calculate_item_values")
 		var me = this;
 
 		if (!this.discount_amount_applied) {
@@ -84,7 +84,7 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 	},
 
 	set_in_company_currency: function(doc, fields) {
-		console.log("set_in_company_currency")
+		// console.log("set_in_company_currency")
 		var me = this;
 		$.each(fields, function(i, f) {
 			doc["base_"+f] = flt(flt(doc[f], precision(f, doc)) * me.frm.doc.conversion_rate, precision("base_" + f, doc));
@@ -92,7 +92,7 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 	},
 
 	initialize_taxes: function() {
-		console.log("initialize_taxes")
+		// console.log("initialize_taxes")
 		var me = this;
 
 		$.each(this.frm.doc["taxes"] || [], function(i, tax) {
@@ -116,7 +116,7 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 	},
 
 	determine_exclusive_rate: function() {
-		console.log("determine_exclusive_rate")
+		// console.log("determine_exclusive_rate")
 		var me = this;
 
 		var has_inclusive_tax = false;
@@ -153,7 +153,7 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 	},
 
 	get_current_tax_fraction: function(tax, item_tax_map) {
-		console.log("get_current_tax_fraction")
+		// console.log("get_current_tax_fraction")
 		// Get tax fraction for calculating tax exclusive amount
 		// from tax inclusive amount
 		var current_tax_fraction = 0.0;
@@ -181,7 +181,7 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 	},
 
 	_get_tax_rate: function(tax, item_tax_map) {
-		console.log("_get_tax_rate")
+		// console.log("_get_tax_rate")
 		return (keys(item_tax_map).indexOf(tax.account_head) != -1) ?
 			flt(item_tax_map[tax.account_head], precision("rate", tax)) : tax.rate;
 	},
@@ -197,14 +197,14 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 			me.frm.doc.base_net_total += item.base_net_amount;
 		});
 
-		console.log("hiii")
-		console.log(this.frm.doc.doctype)
+		// console.log("hiii")
+		// console.log(this.frm.doc.doctype)
 		if(in_list(["Sales Invoice"], this.frm.doc.doctype)) {
 			// me.set_in_company_currency(me.frm.doc, ["adon"]);
-			console.log("in Sales Invoice")
+			// console.log("in Sales Invoice")
 			// console.log(flt(me.frm.doc.adon))
 			if(me.frm.doc.adon){
-				console.log("in adoon")
+				// console.log("in adoon")
 				me.frm.doc.total += flt(me.frm.doc.adon)
 				console.log(me.frm.doc.total)
 				me.frm.doc.base_total += flt(me.frm.doc.adon)

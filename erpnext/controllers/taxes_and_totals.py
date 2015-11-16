@@ -161,6 +161,12 @@ class calculate_taxes_and_totals(object):
 			self.doc.net_total += item.net_amount
 			self.doc.base_net_total += item.base_net_amount
 
+		if self.doc.doctype == "Sales Invoice" and self.doc.adon:
+			self.doc.total += flt(self.doc.adon)
+			self.doc.base_total += flt(self.doc.adon)
+			self.doc.net_total += flt(self.doc.adon)
+			self.doc.base_net_total += flt(self.doc.adon)
+
 		self.doc.round_floats_in(self.doc, ["total", "base_total", "net_total", "base_net_total"])
 
 	def calculate_taxes(self):
