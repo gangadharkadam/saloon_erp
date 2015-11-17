@@ -503,17 +503,23 @@ class SalesInvoice(SellingController):
 		gl_entries = []
 
 		self.make_customer_gl_entry(gl_entries)
+		frappe.errprint(["make_customer_gl_entry", gl_entries])
 
 		self.make_tax_gl_entries(gl_entries)
+		frappe.errprint(["make_tax_gl_entries", gl_entries])
 
 		self.make_item_gl_entries(gl_entries)
+		frappe.errprint(["make_item_gl_entries", gl_entries])
 
 		# merge gl entries before adding pos entries
 		gl_entries = merge_similar_entries(gl_entries)
+		frappe.errprint(["merge_similar_entries", gl_entries])
 	
 		self.make_pos_gl_entries(gl_entries)
+		frappe.errprint(["make_pos_gl_entries", gl_entries])
 
 		self.make_write_off_gl_entry(gl_entries)
+		frappe.errprint(["make_write_off_gl_entry", gl_entries])
 
 		return gl_entries
 
@@ -558,12 +564,13 @@ class SalesInvoice(SellingController):
 					self.get_gl_dict({
 						"account": item.income_account,
 						"against": self.customer,
-						"credit": item.base_net_amount + (flt(self.adon) or 0.0 if adon_added else 0.0),
+						"credit": item.base_net_amount + (flt(self.adon) or 0.0 if not adon_added else 0.0),
 						"credit_in_account_currency": item.base_net_amount \
 							if account_currency==self.company_currency else item.net_amount,
 						"cost_center": item.cost_center
 					}, account_currency)
 				)
+			print gl_entries
 			adon_added = True
 
 		# expense account gl entries
