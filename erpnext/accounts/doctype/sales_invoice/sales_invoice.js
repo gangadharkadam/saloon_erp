@@ -32,6 +32,8 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 		erpnext.queries.setup_queries(this.frm, "Warehouse", function() {
 			return erpnext.queries.warehouse(me.frm.doc);
 		});
+
+		$('.grid-add-row').remove();
 	},
 
 	refresh: function(doc, dt, dn) {

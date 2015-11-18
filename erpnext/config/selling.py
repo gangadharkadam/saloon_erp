@@ -266,12 +266,12 @@ def get_data():
 					"name": "Sales Order Trends",
 					"doctype": "Sales Order"
 				},
-				{
-					"type": "report",
-					"is_query_report": True,
-					"name": "Available Stock for Packing Items",
-					"doctype": "Item",
-				},
+				# {
+				# 	"type": "report",
+				# 	"is_query_report": True,
+				# 	"name": "Available Stock for Packing Items",
+				# 	"doctype": "Item",
+				# },
 				{
 					"type": "report",
 					"is_query_report": True,

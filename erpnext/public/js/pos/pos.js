@@ -6,7 +6,7 @@ frappe.provide("erpnext.pos");
 
 erpnext.pos.PointOfSale = Class.extend({
 	init: function(wrapper, frm) {
-		console.log("pos si normal");
+		// console.log("pos si normal");
 		
 		this.wrapper = wrapper;
 		this.frm = frm;
@@ -540,7 +540,7 @@ erpnext.pos.toggle = function(frm, show) {
 	if(!frm.pos) {
 		var wrapper = frm.page.add_view("pos", "<div>");
 		// frm.pos = new erpnext.pos.PointOfSale(wrapper, frm);
-		if (frm.doctype=='Sales Invoice'){			
+		if (frm.doctype=='Sales Invoice'){	
 			frm.pos = new erpnext.pos.PointOfSaleSI(wrapper, frm);
 		}
 		else{
@@ -566,18 +566,20 @@ erpnext.pos.toggle = function(frm, show) {
 ///
 erpnext.pos.PointOfSaleSI = Class.extend({
 	init: function(wrapper, frm) {
-		console.log("pos si");
+		// console.log("pos si");
 		this.wrapper = wrapper;
 		this.frm = frm;
 		this.wrapper.html(frappe.render_template("pos_si", {}));
 
 		this.check_transaction_type();
 		this.make();
-		// this.get_forms_value();
 
 		var me = this;
 		$(this.frm.wrapper).on("refresh-fields", function() {
 			me.refresh();
+			if (!cur_frm.doc.__unsaved){
+				$("input[data-fieldname = mob_no]").val(this.frm.doc.mob_no);
+			}
 		});
 
 		this.wrapper.find('input.discount-amount').on("change", function() {
@@ -585,6 +587,7 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 		});
 
 		this.add_adon_value();
+
 	},
 	check_transaction_type: function() {
 		var me = this;
@@ -822,22 +825,6 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 					frappe.model.clear_doc(d.doctype, d.name);
 					me.refresh_grid();
 				} else {
-                    // addon
-					/*item = $.grep( $(".items").children(), function( n, i ) {
-    					return $(n).attr("data-item-code") == item_code
-						} );
-
-					var adon = $(item).find(".pos-item-adon").val()
-					if (parseInt(d.adon)){
-						total_amt = (d.rate * qty) + parseInt(adon)
-						$("input[data-fieldname = amount]").val(total_amt);
-						frappe.model.set_value(d.doctype, d.name, "amount", total_amt);
-					}
-					else{
-						total_amt = d.rate * qty
-						$("input[data-fieldname = amount]").val(total_amt);
-						frappe.model.set_value(d.doctype, d.name, "amount", total_amt);
-					}  */
 					frappe.model.set_value(d.doctype, d.name, "qty", qty);
 				}
 			}
@@ -845,7 +832,7 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 		this.refresh();
 	},
 	refresh: function() {
-		console.log("in refresh");
+		// console.log("in refresh");
 		var me = this;
 
 		this.refresh_item_list();
@@ -864,7 +851,7 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 		}
 	},
 	refresh_fields: function() {
-		console.log("in refresh_fields")
+		// console.log("in refresh_fields")
 		this.party_field.set_input(this.frm.doc[this.party.toLowerCase()]);
 		this.wrapper.find('input.discount-amount').val(this.frm.doc.discount_amount);
 		this.wrapper.find('input.adon').val(this.frm.doc.adon);
@@ -944,43 +931,6 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 			me.increase_decrease_qty($item, $(this).attr("data-action"));
 		});
 
-        // adon
-		/*$(this.wrapper).find(".pos-item-desc").on("focusout", function() {
-			var desc = $(this).val()
-			var item_code =$(this).parent().parent().parent().attr("data-item-code")
-			$.each(me.frm.doc.items|| [], function(i, d) {
-				if (d.item_code == item_code){
-					frappe.model.set_value(d.doctype, d.name, "desc", desc);
-					me.refresh();
-				}
-			});
-		});
-		
-		$(this.wrapper).find("input.pos-item-adon").on("focusout", function() {
-			// console.log("changeeeeeeeeeee")
-			var adon = 0.0
-			adon = parseInt($(this).val());
-			var total_val = 0.0
-			var item_code =$(this).parent().parent().parent().attr("data-item-code");
-			$.each(me.frm.doc.items|| [], function(i, d) {
-				if (d.item_code == item_code){
-					if (adon){
-						total_amt = d.rate * d.qty + adon
-						$("input[data-fieldname = amount]").val(total_amt);
-					}
-					else{
-						total_amt = d.rate * d.qty 
-						$("input[data-fieldname = amount]").val(total_amt);
-					}
-					frappe.model.set_value(d.doctype, d.name, "adon", adon );
-				}				
-			});
-
-			me.total_values(item_code);
-			me.refresh()
-		});
-*/		
-		// this.add_adon_value();
 		this.focus();
 	},
 	add_adon_value: function(){
@@ -1025,6 +975,9 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 			this.mob_no.$input.focus();
 		} else {
 			if(!(this.frm.doctype == "Quotation" && this.frm.doc.quotation_to!="Customer"))
+				if (cur_frm.doc.__unsaved){
+					$("input[data-fieldname = mob_no]").val('');
+				}
 				this.mob_no.$input.focus();
 		}
 	},
@@ -1046,6 +999,7 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 			parent: $(item).find(".pos-item-emp"),
 			only_input: true,
 		});
+
 		this.emp.get_query = function() { 
 			return{
 					query: "erpnext.accounts.doctype.sales_invoice.pos.get_all_employee"
@@ -1060,6 +1014,7 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 				if (d.item_code == item_code){
 					$("input[data-fieldname = emp]").val(e);
 					frappe.model.set_value(d.doctype, d.name, "emp", e);
+					// me.refresh_fields();
 				}
 			});
 		});
@@ -1131,7 +1086,7 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 		this.refresh_grid();
 	},
 	refresh_grid: function() {
-		console.log("in refresh_grid");
+		// console.log("in refresh_grid");
 		this.frm.dirty();
 		this.frm.fields_dict["items"].grid.refresh();
 		this.frm.script_manager.trigger("calculate_taxes_and_totals");

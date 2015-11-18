@@ -195,51 +195,51 @@ def get_data():
 					"name": "Purchase Order Items To Be Received",
 					"doctype": "Purchase Receipt"
 				},
-				{
-					"type": "report",
-					"name": "Item Shortage Report",
-					"route": "Report/Bin/Item Shortage Report",
-					"doctype": "Purchase Receipt"
-				},
-				{
-					"type": "report",
-					"name": "Serial No Service Contract Expiry",
-					"doctype": "Serial No"
-				},
-				{
-					"type": "report",
-					"name": "Serial No Status",
-					"doctype": "Serial No"
-				},
-				{
-					"type": "report",
-					"name": "Serial No Warranty Expiry",
-					"doctype": "Serial No"
-				},
+				# {
+				# 	"type": "report",
+				# 	"name": "Item Shortage Report",
+				# 	"route": "Report/Bin/Item Shortage Report",
+				# 	"doctype": "Purchase Receipt"
+				# },
+				# {
+				# 	"type": "report",
+				# 	"name": "Serial No Service Contract Expiry",
+				# 	"doctype": "Serial No"
+				# },
+				# {
+				# 	"type": "report",
+				# 	"name": "Serial No Status",
+				# 	"doctype": "Serial No"
+				# },
+				# {
+				# 	"type": "report",
+				# 	"name": "Serial No Warranty Expiry",
+				# 	"doctype": "Serial No"
+				# },
 				{
 					"type": "report",
 					"is_query_report": True,
 					"name": "Requested Items To Be Transferred",
 					"doctype": "Material Request"
 				},
-				{
-					"type": "report",
-					"is_query_report": True,
-					"name": "Batch-Wise Balance History",
-					"doctype": "Batch"
-				},
-				{
-					"type": "report",
-					"is_query_report": True,
-					"name": "Item Prices",
-					"doctype": "Price List"
-				},
-				{
-					"type": "report",
-					"is_query_report": True,
-					"name": "Itemwise Recommended Reorder Level",
-					"doctype": "Item"
-				},
+				# {
+				# 	"type": "report",
+				# 	"is_query_report": True,
+				# 	"name": "Batch-Wise Balance History",
+				# 	"doctype": "Batch"
+				# },
+				# {
+				# 	"type": "report",
+				# 	"is_query_report": True,
+				# 	"name": "Item Prices",
+				# 	"doctype": "Price List"
+				# },
+				# {
+				# 	"type": "report",
+				# 	"is_query_report": True,
+				# 	"name": "Itemwise Recommended Reorder Level",
+				# 	"doctype": "Item"
+				# },
 				{
 					"type": "report",
 					"is_query_report": True,

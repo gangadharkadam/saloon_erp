@@ -7,7 +7,8 @@ frappe.query_reports["Stock Projected Qty"] = {
 			"fieldname":"company",
 			"label": __("Company"),
 			"fieldtype": "Link",
-			"options": "Company"
+			"options": "Company",
+			"reqd":1
 		},
 		{
 			"fieldname":"warehouse",

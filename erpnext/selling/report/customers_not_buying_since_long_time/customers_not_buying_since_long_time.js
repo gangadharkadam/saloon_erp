@@ -15,6 +15,14 @@ frappe.query_reports["Customers Not Buying Since Long Time"] = {
 			"fieldtype": "Select",
 			"default": "Sales Order",
 			"options": "Sales Order\nSales Invoice"
+		},
+		{
+			"fieldname":"company",
+			"label": __("Company"),
+			"fieldtype": "Link",
+			"options": "Company",
+			"default": frappe.defaults.get_user_default("company"),
+			"reqd": 1
 		}
 	]
 }
