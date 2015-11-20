@@ -166,6 +166,7 @@ class calculate_taxes_and_totals(object):
 			self.doc.base_total += flt(self.doc.adon)
 			self.doc.net_total += flt(self.doc.adon)
 			self.doc.base_net_total += flt(self.doc.adon)
+			self._set_in_company_currency(self.doc, ["adon"])
 
 		self.doc.round_floats_in(self.doc, ["total", "base_total", "net_total", "base_net_total"])
 
@@ -264,7 +265,8 @@ class calculate_taxes_and_totals(object):
 		tax.item_wise_tax_detail[key] = [tax_rate,flt(item_wise_tax_amount, tax.precision("base_tax_amount"))]
 
 	def round_off_totals(self, tax):
-		tax.total = flt(tax.total, tax.precision("total"))
+		# tax.total = flt(tax.total, tax.precision("total"))
+		tax.total = flt(tax.total + self.doc.adon, tax.precision("total"))
 		tax.tax_amount = flt(tax.tax_amount, tax.precision("tax_amount"))
 		tax.tax_amount_after_discount_amount = flt(tax.tax_amount_after_discount_amount, tax.precision("tax_amount"))
 
@@ -356,7 +358,7 @@ class calculate_taxes_and_totals(object):
 					# discount amount rounding loss adjustment if no taxes
 					if (not taxes or self.doc.apply_discount_on == "Net Total") \
 						and i == len(self.doc.get("items")) - 1:
-							discount_amount_loss = flt(self.doc.total - net_total - self.doc.discount_amount,
+							discount_amount_loss = flt(self.doc.total - net_total - self.doc.discount_amount - self.doc.adon,
 								self.doc.precision("net_total"))
 							item.net_amount = flt(item.net_amount + discount_amount_loss,
 								item.precision("net_amount"))
@@ -382,7 +384,6 @@ class calculate_taxes_and_totals(object):
 				elif tax.row_id in actual_taxes_dict:
 					actual_tax_amount = flt(actual_taxes_dict.get(tax.row_id, 0)) * flt(tax.rate) / 100
 					actual_taxes_dict.setdefault(tax.idx, actual_tax_amount)
-
 			return flt(self.doc.grand_total - sum(actual_taxes_dict.values()), self.doc.precision("grand_total"))
 
 

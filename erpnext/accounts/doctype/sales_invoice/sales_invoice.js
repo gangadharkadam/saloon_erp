@@ -33,7 +33,23 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 			return erpnext.queries.warehouse(me.frm.doc);
 		});
 
-		$('.grid-add-row').remove();
+		$("[data-fieldname='items']").find(".grid-add-row").remove();
+
+		// if(this.frm.doc.__islocal && this.frm.doc.mode_of_payment=='Cash'){
+		// 	me.frm.call({
+		// 		method: "erpnext.accounts.doctype.sales_invoice.sales_invoice.set_cash_account",
+		// 		args: {
+		// 			company: me.frm.doc.company
+		// 		},
+		// 		callback: function(r) {
+		// 			if(r.message) {
+		// 				me.frm.doc.cash_bank_account = r.message[0][0]
+		// 				refresh_field('cash_bank_account')
+		// 			}
+		// 		}
+		// 	});
+		// }
+				
 	},
 
 	refresh: function(doc, dt, dn) {

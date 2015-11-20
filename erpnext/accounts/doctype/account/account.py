@@ -71,6 +71,7 @@ class Account(Document):
 		if frappe.db.exists("Account", self.name):
 			if not frappe.db.get_value("Account", self.name, "parent_account"):
 				throw(_("Root cannot be edited."), RootNotEditable)
+				# throw(_("Abbreviation cannot be same for two companies.Please select another abbreviation.!"), RootNotEditable)
 
 	def validate_frozen_accounts_modifier(self):
 		old_value = frappe.db.get_value("Account", self.name, "freeze_account")

@@ -934,6 +934,7 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 		this.focus();
 	},
 	add_adon_value: function(){
+		console.log("in adon trigger")
 		var me = this;
 		this.wrapper.find("input.adon").on("change", function() {
 			// var adon = 0.0

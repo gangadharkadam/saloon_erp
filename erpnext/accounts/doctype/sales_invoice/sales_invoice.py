@@ -370,10 +370,7 @@ class SalesInvoice(SellingController):
 
 		if flt(self.paid_amount) + flt(self.write_off_amount) \
 				- flt(self.base_grand_total + self.adon) > 1/(10**(self.precision("base_grand_total") + 1)):
-			
-			
-			
-			
+
 			frappe.throw(_("""Paid amount + Write Off Amount can not be greater than Grand Total"""))
 
 
@@ -503,23 +500,17 @@ class SalesInvoice(SellingController):
 		gl_entries = []
 
 		self.make_customer_gl_entry(gl_entries)
-		frappe.errprint(["make_customer_gl_entry", gl_entries])
 
 		self.make_tax_gl_entries(gl_entries)
-		frappe.errprint(["make_tax_gl_entries", gl_entries])
 
 		self.make_item_gl_entries(gl_entries)
-		frappe.errprint(["make_item_gl_entries", gl_entries])
 
 		# merge gl entries before adding pos entries
 		gl_entries = merge_similar_entries(gl_entries)
-		frappe.errprint(["merge_similar_entries", gl_entries])
 	
 		self.make_pos_gl_entries(gl_entries)
-		frappe.errprint(["make_pos_gl_entries", gl_entries])
 
 		self.make_write_off_gl_entry(gl_entries)
-		frappe.errprint(["make_write_off_gl_entry", gl_entries])
 
 		return gl_entries
 
@@ -570,7 +561,7 @@ class SalesInvoice(SellingController):
 						"cost_center": item.cost_center
 					}, account_currency)
 				)
-			print gl_entries
+			# print gl_entries
 			adon_added = True
 
 		# expense account gl entries
@@ -720,3 +711,10 @@ def make_delivery_note(source_name, target_doc=None):
 def make_sales_return(source_name, target_doc=None):
 	from erpnext.controllers.sales_and_purchase_return import make_return_doc
 	return make_return_doc("Sales Invoice", source_name, target_doc)
+
+
+# @frappe.whitelist()
+# def set_cash_account(company):
+# 	account = frappe.db.sql("""select name from `tabAccount` where account_type='Cash' and is_group=0 and company='%s'
+# 		"""%(company),as_list=1,debug=1)
+# 	return account

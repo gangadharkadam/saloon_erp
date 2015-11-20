@@ -6,7 +6,6 @@ frappe.require("assets/erpnext/js/controllers/stock_controller.js");
 
 erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 	calculate_taxes_and_totals: function(update_paid_amount) {
-		// console.log("calculate_taxes_and_totals")
 		this.discount_amount_applied = false;
 		this._calculate_taxes_and_totals();
 
@@ -29,7 +28,6 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 	},
 
 	_calculate_taxes_and_totals: function() {
-		// console.log("---calculate_taxes_and_totals")
 		this.validate_conversion_rate();
 		this.calculate_item_values();
 		this.initialize_taxes();
@@ -43,7 +41,6 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 	},
 
 	validate_conversion_rate: function() {
-		// console.log("validate_conversion_rate")
 		this.frm.doc.conversion_rate = flt(this.frm.doc.conversion_rate, precision("conversion_rate"));
 		var conversion_rate_label = frappe.meta.get_label(this.frm.doc.doctype, "conversion_rate",
 			this.frm.doc.name);
@@ -67,7 +64,6 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 	},
 
 	calculate_item_values: function() {
-		// console.log("calculate_item_values")
 		var me = this;
 
 		if (!this.discount_amount_applied) {
@@ -84,7 +80,6 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 	},
 
 	set_in_company_currency: function(doc, fields) {
-		// console.log("set_in_company_currency")
 		var me = this;
 		$.each(fields, function(i, f) {
 			doc["base_"+f] = flt(flt(doc[f], precision(f, doc)) * me.frm.doc.conversion_rate, precision("base_" + f, doc));
@@ -92,7 +87,6 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 	},
 
 	initialize_taxes: function() {
-		// console.log("initialize_taxes")
 		var me = this;
 
 		$.each(this.frm.doc["taxes"] || [], function(i, tax) {
@@ -116,7 +110,6 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 	},
 
 	determine_exclusive_rate: function() {
-		// console.log("determine_exclusive_rate")
 		var me = this;
 
 		var has_inclusive_tax = false;
@@ -153,7 +146,6 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 	},
 
 	get_current_tax_fraction: function(tax, item_tax_map) {
-		// console.log("get_current_tax_fraction")
 		// Get tax fraction for calculating tax exclusive amount
 		// from tax inclusive amount
 		var current_tax_fraction = 0.0;
@@ -181,7 +173,6 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 	},
 
 	_get_tax_rate: function(tax, item_tax_map) {
-		// console.log("_get_tax_rate")
 		return (keys(item_tax_map).indexOf(tax.account_head) != -1) ?
 			flt(item_tax_map[tax.account_head], precision("rate", tax)) : tax.rate;
 	},
@@ -197,30 +188,24 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 			me.frm.doc.base_net_total += item.base_net_amount;
 		});
 
-		// console.log("hiii")
-		// console.log(this.frm.doc.doctype)
 		if(in_list(["Sales Invoice"], this.frm.doc.doctype)) {
 			// me.set_in_company_currency(me.frm.doc, ["adon"]);
-			// console.log("in Sales Invoice")
-			// console.log(flt(me.frm.doc.adon))
 			if(me.frm.doc.adon){
-				// console.log("in adoon")
 				me.frm.doc.total += flt(me.frm.doc.adon)
-				console.log(me.frm.doc.total)
 				me.frm.doc.base_total += flt(me.frm.doc.adon)
 				me.frm.doc.net_total += flt(me.frm.doc.adon)
 				me.frm.doc.base_net_total += flt(me.frm.doc.adon)
-				// me.set_in_company_currency(me.frm.doc, ["adon"]);
+				me.set_in_company_currency(me.frm.doc, ["adon"]);
 			}
 			else{
+				// me.set_in_company_currency(me.frm.doc, ["adon"]);
 				me.frm.doc.adon = 0.0
 				me.frm.doc.total += flt(me.frm.doc.adon)
 				me.frm.doc.base_total += flt(me.frm.doc.adon)
 				me.frm.doc.net_total += flt(me.frm.doc.adon)
 				me.frm.doc.base_net_total += flt(me.frm.doc.adon)
-				// me.set_in_company_currency(me.frm.doc, ["adon"]);
-			}
-			
+				me.set_in_company_currency(me.frm.doc, ["adon"]);
+			}	
 		}
 
 		frappe.model.round_floats_in(this.frm.doc, ["total", "base_total", "net_total", "base_net_total"]);
@@ -285,9 +270,6 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 
 				// in tax.total, accumulate grand total for each item
 				tax.total += tax.grand_total_for_current_item;
-				// console.log("final Grand total")
-				// console.log(me.frm.doc.adon)
-				// console.log(tax.total)
 				// set precision in the last item iteration
 				if (n == me.frm.doc["items"].length - 1) {
 					me.round_off_totals(tax);
@@ -347,6 +329,7 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 
 	round_off_totals: function(tax) {
 		tax.total = flt(tax.total + this.frm.doc.adon, precision("total", tax));
+		// tax.total = flt(tax.total, precision("total", tax));
 		tax.tax_amount = flt(tax.tax_amount, precision("tax_amount", tax));
 		tax.tax_amount_after_discount_amount = flt(tax.tax_amount_after_discount_amount, precision("tax_amount", tax));
 
@@ -391,17 +374,11 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 		// Changing sequence can cause roundiing issue and on-screen discrepency
 		var me = this;
 		var tax_count = this.frm.doc["taxes"] ? this.frm.doc["taxes"].length : 0;
-		// console.log("calculate GT")
-		// console.log(tax_count)
 		this.frm.doc.grand_total = flt(tax_count ? this.frm.doc["taxes"][tax_count - 1].total : this.frm.doc.net_total);
-		// console.log(this.frm.doc.grand_total)
-
+		
 		if(in_list(["Quotation", "Sales Order", "Delivery Note", "Sales Invoice"], this.frm.doc.doctype)) {
 			this.frm.doc.base_grand_total = (this.frm.doc.total_taxes_and_charges) ?
 				flt(this.frm.doc.grand_total * this.frm.doc.conversion_rate) : this.frm.doc.base_net_total;
-				// console.log("totaallll")
-				// console.log(this.frm.doc.base_grand_total)
-				// console.log(this.frm.doc.base_net_total)
 		} else {
 			// other charges added/deducted
 			this.frm.doc.taxes_and_charges_added = this.frm.doc.taxes_and_charges_deducted = 0.0;
@@ -522,7 +499,6 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 			$.each(actual_taxes_dict, function(key, value) {
 				if (value) total_actual_tax += value;
 			});
-
 			return flt(this.frm.doc.grand_total - total_actual_tax, precision("grand_total"));
 		}
 	},
