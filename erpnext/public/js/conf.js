@@ -29,7 +29,7 @@ $(document).bind('toolbar_setup', function() {
 			frappe.urllib.get_base_url()+'/assets/erpnext/images/erp-icon.svg" />');
 	*/
 
-	$('[data-link="docs"]').attr("href", "https://manual.erpnext.com")
+	//$('[data-link="docs"]').attr("href", "https://manual.erpnext.com")
 });
 
 // doctypes created via tree
