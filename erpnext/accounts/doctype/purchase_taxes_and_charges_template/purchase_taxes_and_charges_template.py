@@ -10,3 +10,6 @@ from erpnext.accounts.doctype.sales_taxes_and_charges_template.sales_taxes_and_c
 class PurchaseTaxesandChargesTemplate(Document):
 	def validate(self):
 		valdiate_taxes_and_charges_template(self)
+
+	def autoname(self):
+		self.name = self.title + '-' + self.company

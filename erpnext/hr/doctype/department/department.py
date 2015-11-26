@@ -7,4 +7,5 @@ import frappe
 from frappe.model.document import Document
 
 class Department(Document):
-	pass
+	def autoname(self):
+		self.name = self.department_name + '-' + self.company

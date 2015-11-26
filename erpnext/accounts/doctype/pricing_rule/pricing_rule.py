@@ -22,6 +22,11 @@ class PricingRule(Document):
 		self.validate_price_or_discount()
 		self.validate_max_discount()
 
+	def autoname(self):
+		from frappe.model.naming import make_autoname
+		name = make_autoname('PRULE.#####') 
+		self.name = name + '-' + self.company
+
 	def validate_mandatory(self):
 		for field in ["apply_on", "applicable_for"]:
 			tocheck = frappe.scrub(self.get(field) or "")

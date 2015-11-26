@@ -27,13 +27,16 @@ class Item(WebsiteGenerator):
 		self.get("__onload").sle_exists = self.check_if_sle_exists()
 
 	def autoname(self):
-		if frappe.db.get_default("item_naming_by")=="Naming Series" and not self.variant_of:
-			from frappe.model.naming import make_autoname
-			self.item_code = make_autoname(self.naming_series+'.#####')
-		elif not self.item_code:
-			msgprint(_("Item Code is mandatory because Item is not automatically numbered"), raise_exception=1)
+		from frappe.model.naming import make_autoname
+		# if frappe.db.get_default("item_naming_by")=="Naming Series" and not self.variant_of:
+		# 	from frappe.model.naming import make_autoname
+		# 	self.item_code = make_autoname(self.naming_series+'.#####')
+		# elif not self.item_code:
+		# 	msgprint(_("Item Code is mandatory because Item is not automatically numbered"), raise_exception=1)
 
-		self.name = self.item_code
+		# self.name = self.item_code
+		if frappe.db.get_default("item_naming_by")=="Item Code":
+			self.name = self.item_code + '-' + self.company
 
 	def before_insert(self):
 		if self.is_sales_item=="Yes":

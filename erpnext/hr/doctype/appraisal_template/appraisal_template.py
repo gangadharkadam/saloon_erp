@@ -11,6 +11,9 @@ from frappe.model.document import Document
 class AppraisalTemplate(Document):
 	def validate(self):
 		self.check_total_points()
+
+	def autoname(self):
+		self.name = self.kra_title + '-' + self.company
 		
 	def check_total_points(self):	
 		total_points = 0

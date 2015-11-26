@@ -10,6 +10,9 @@ class SalesTaxesandChargesTemplate(Document):
 	def validate(self):
 		valdiate_taxes_and_charges_template(self)
 
+	def autoname(self):
+		self.name = self.title + '-' + self.company
+
 def valdiate_taxes_and_charges_template(doc):
 	if not doc.is_default and not frappe.get_all(doc.doctype, filters={"is_default": 1}):
 		doc.is_default = 1

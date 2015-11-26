@@ -14,6 +14,9 @@ class HolidayList(Document):
 	def validate(self):
 		self.update_default_holiday_list()
 
+	def autoname(self):
+		self.name = self.holiday_list_name + '-' + self.company
+
 	def get_weekly_off_dates(self):
 		self.validate_values()
 		self.validate_days()

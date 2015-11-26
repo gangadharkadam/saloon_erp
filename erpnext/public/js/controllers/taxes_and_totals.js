@@ -328,8 +328,12 @@ erpnext.taxes_and_totals = erpnext.stock.StockController.extend({
 	},
 
 	round_off_totals: function(tax) {
-		tax.total = flt(tax.total + this.frm.doc.adon, precision("total", tax));
-		// tax.total = flt(tax.total, precision("total", tax));
+		if(in_list(["Sales Invoice"], this.frm.doc.doctype)) {
+			tax.total = flt(tax.total + this.frm.doc.adon, precision("total", tax));
+		}
+		else{
+			tax.total = flt(tax.total, precision("total", tax));
+		}		
 		tax.tax_amount = flt(tax.tax_amount, precision("tax_amount", tax));
 		tax.tax_amount_after_discount_amount = flt(tax.tax_amount_after_discount_amount, precision("tax_amount", tax));
 

@@ -156,7 +156,7 @@
  "issingle": 0, 
  "istable": 0, 
  "max_attachments": 5, 
- "modified": "2015-10-28 15:53:23.904063", 
+ "modified": "2015-11-23 18:15:17.994053", 
  "modified_by": "Administrator", 
  "module": "Stock", 
  "name": "Batch", 
@@ -240,6 +240,7 @@
    "set_user_permissions": 0, 
    "share": 1, 
    "submit": 0, 
+   "user_permission_doctypes": "[\"Company\"]", 
    "write": 1
   }, 
   {

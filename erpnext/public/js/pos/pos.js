@@ -934,7 +934,7 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 		this.focus();
 	},
 	add_adon_value: function(){
-		console.log("in adon trigger")
+		// console.log("in adon trigger")
 		var me = this;
 		this.wrapper.find("input.adon").on("change", function() {
 			// var adon = 0.0
@@ -950,27 +950,27 @@ erpnext.pos.PointOfSaleSI = Class.extend({
 		$("input[data-fieldname = adon]").val(me.frm.doc.adon);
 		$("input[data-fieldname = adon_description]").val(me.frm.doc.adon_description);
 	},
-	total_values: function(item_code){
-		// console.log("totallll")
-		var me = this;
-		var val = 0.0
-		$.each(me.frm.doc.items|| [], function(i, d) {
-			if (d.item_code == item_code){
-				if(d.adon){
-					var grand_total = me.frm.doc.grand_total + d.adon
-					var net_total = me.frm.doc.net_total + d.adon
-					frappe.model.set_value(me.frm.doctype, me.frm.docname, "grand_total", grand_total );
-					frappe.model.set_value(me.frm.doctype, me.frm.docname, "net_total", net_total );
-				}
-				else{
-					var grand_total = me.frm.doc.grand_total + 0.0
-					var net_total = me.frm.doc.net_total + 0.0
-					frappe.model.set_value(me.frm.doctype, me.frm.docname, "grand_total", grand_total );
-					frappe.model.set_value(me.frm.doctype, me.frm.docname, "net_total", net_total );
-				}
-			}
-		});
-	},
+	// total_values: function(item_code){
+	// 	// console.log("totallll")
+	// 	var me = this;
+	// 	var val = 0.0
+	// 	$.each(me.frm.doc.items|| [], function(i, d) {
+	// 		if (d.item_code == item_code){
+	// 			if(d.adon){
+	// 				// var grand_total = me.frm.doc.grand_total + d.adon
+	// 				// var net_total = me.frm.doc.net_total + d.adon
+	// 				frappe.model.set_value(me.frm.doctype, me.frm.docname, "grand_total", grand_total );
+	// 				frappe.model.set_value(me.frm.doctype, me.frm.docname, "net_total", net_total );
+	// 			}
+	// 			else{
+	// 				// var grand_total = me.frm.doc.grand_total + 0.0
+	// 				// var net_total = me.frm.doc.net_total + 0.0
+	// 				frappe.model.set_value(me.frm.doctype, me.frm.docname, "grand_total", grand_total );
+	// 				frappe.model.set_value(me.frm.doctype, me.frm.docname, "net_total", net_total );
+	// 			}
+	// 		}
+	// 	});
+	// },
 	focus: function() {
 		if(this.frm.doc[this.party.toLowerCase()]) {
 			this.mob_no.$input.focus();

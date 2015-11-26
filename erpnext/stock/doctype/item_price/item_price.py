@@ -17,6 +17,11 @@ class ItemPrice(Document):
 		self.update_price_list_details()
 		self.update_item_details()
 
+	def autoname(self):
+		from frappe.model.naming import make_autoname
+		name = make_autoname('ITEM-PRICE-.#####')
+		self.name = name + '-' + self.company
+
 	def validate_item(self):
 		if not frappe.db.exists("Item", self.item_code):
 			throw(_("Item {0} not found").format(self.item_code))

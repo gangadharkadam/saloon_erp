@@ -13,6 +13,9 @@ class PriceList(Document):
 		if not cint(self.buying) and not cint(self.selling):
 			throw(_("Price List must be applicable for Buying or Selling"))
 
+	def autoname(self):
+		self.name = self.price_list_name + '-' + self.company
+
 	def on_update(self):
 		self.set_default_if_missing()
 		self.update_item_price()

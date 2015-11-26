@@ -21,9 +21,10 @@ class Supplier(TransactionBase):
 	def autoname(self):
 		supp_master_name = frappe.defaults.get_global_default('supp_master_name')
 		if supp_master_name == 'Supplier Name':
-			self.name = self.supplier_name
+			self.name = self.supplier_name + '-' + self.company
 		else:
-			self.name = make_autoname(self.naming_series + '.#####')
+			name = make_autoname(self.naming_series + '.#####')
+			self.name = name + '-' + self.company
 
 	def update_address(self):
 		frappe.db.sql("""update `tabAddress` set supplier_name=%s, modified=NOW()

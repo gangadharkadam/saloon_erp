@@ -25,3 +25,6 @@ class MonthlyDistribution(Document):
 		if flt(total, 2) != 100.0:
 			frappe.throw(_("Percentage Allocation should be equal to 100%") + \
 				" ({0}%)".format(str(flt(total, 2))))
+
+	def autoname(self):
+		self.name = self.distribution_id + '-' + self.company
